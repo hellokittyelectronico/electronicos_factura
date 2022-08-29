@@ -550,14 +550,49 @@
         <field name="campo_tecnico">"R-99-PN"</field>
         <field name="detalle">el codigo calidad del partner</field>
     </record>
-    <!-- <record id="facturan0b66" model="base_electronicos.line">
+
+    <record id="facturan0b66" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
-        <field name="name">documento</field>
+        <field name="name">factura_nc</field>
         <field name="categoria">factura</field>
-        <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.company_id.partner_id.id_plataforma</field>
-        <field name="detalle">El tipo de documento a generar</field>
-    </record> -->
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura</field>
+        <field name="detalle">la factura de la nota credito</field>
+    </record>
+
+    <record id="facturan0b67" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">factura_nc</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura</field>
+        <field name="detalle">la factura de la nota credito</field>
+    </record>
+    <record id="facturan0b68" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">fecha_factura_nc</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura.date</field>
+        <field name="detalle">fecha factura de la nota credito</field>
+    </record>
+    <record id="facturan0b69" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">cufe_factura_nc</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura.cufe</field>
+        <field name="detalle">cufe factura de la nota credito</field>
+    </record>
+
+    <record id="facturan0b70" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">code_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.code_refund</field>
+        <field name="detalle">codigo refund nota credito</field>
+    </record>
 
 
 </odoo>

@@ -25,10 +25,8 @@ class datos_generales(models.Model):
     tipo_factura = fields.Selection(
         selection=[('factura', _('Factura')),
                    ('extranjero', _('Extranjero')),
-				   ('nota_credito_factura', _('Nota Credito Factura')),
                    ('nota_debito_factura', _('Nota Debito Factura')),
-                   ('documento_soporte', _('Documento Soporte')),
-                   ('Nota_credito_Documento_soporte', _('Nota Credito Documento Soporte')),],
+                   ('documento_soporte', _('Documento Soporte')),],
         string=_('Tipo de documento'), 
         default='factura'
     )
