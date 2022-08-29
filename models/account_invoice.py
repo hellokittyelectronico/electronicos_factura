@@ -230,7 +230,7 @@ class AccountMove(models.Model):
         valores_lineas = valores.mp_id
         print("haber")
         print(self.journal_id)
-        documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
+        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id)])
         print(documento)
         if documento:
             if self.move_type == "out_invoice" and documento.tipo_factura == "factura":
