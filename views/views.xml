@@ -26,9 +26,9 @@
                     <field name="correo_factura" />
                     <field name="regimen_fiscal" />
                     
-                    <field name="tipo_documento_plataforma" />
+                    <!-- <field name="tipo_documento_plataforma" />
                     <field name="numero_plataforma" />
-                    <field name="dv_plataforma" />
+                    <field name="dv_plataforma" /> -->
 
                     <field name="id_plataforma" />
                     <field name="password" />
@@ -235,11 +235,9 @@
                 	<button name="action_invoice_sent" type="object" string="Enviar por correo-e" attrs="{'invisible':[('state', 'not in', ('cancel'))]}" groups="base.group_user"/>
                 </button>    --> 
                 <button name="button_draft" position="before"> 
-                	<button name="envio_directo" type="object" string="Generar Documento Electronico" 
-                			 groups="base.group_user"/>
+                	<button name="envio_directo" type="object" string="Generar Documento Electronico" attrs="{'invisible':['|',('state', 'not in', ('posted')),('estado_factura', 'in', ('Generada_correctamente'))]}" groups="base.group_user"/>
                 	<button name="imprimir" type="object" string="Imprimir Documento Electronico" 
-                			 groups="base.group_user"/>
-
+                    attrs="{'invisible':['|',('state', 'not in', ('posted')),('estado_factura', 'not in', ('Generada_correctamente'))]}" groups="base.group_user"/>
                   
                 </button>     
             </field>

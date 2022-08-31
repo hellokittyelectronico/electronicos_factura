@@ -142,7 +142,7 @@ class AccountMove(models.Model):
     
     sub_tipo_documento = fields.Selection([
         ('Factura_Electronica', 'Factura Electronica'),
-        ('Nota_debito', 'Nota_debito'),
+        ('nota_debito_factura', 'Nota_debito_factura'),
         ('Documento_soporte', 'Documento_soporte'),
     ], string='Tipo documento')
 
@@ -241,6 +241,8 @@ class AccountMove(models.Model):
                 self.tipo_documento = documento.tipo_factura
             elif self.move_type == "in_refund" and documento.tipo_factura == "documento_soporte":
                 self.tipo_documento = "Nota Credito Doc soporte"
+            elif self.move_type == "out_invoice" and documento.tipo_factura == "nota_debito_factura":
+                self.tipo_documento = documento.tipo_factura
         # datos_generales = self.env['electronicos_factura.datos_generales'].search([('diario', '=', self.journal_id[0].id)])
         # if datos_generales: 
         #     self.tipo_documento = "soporte"

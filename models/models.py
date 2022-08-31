@@ -24,7 +24,6 @@ class datos_generales(models.Model):
     diario = fields.Many2one('account.journal', string='Diario',ondelete='restrict')
     tipo_factura = fields.Selection(
         selection=[('factura', _('Factura')),
-                   ('extranjero', _('Extranjero')),
                    ('nota_debito_factura', _('Nota Debito Factura')),
                    ('documento_soporte', _('Documento Soporte')),],
         string=_('Tipo de documento'), 
