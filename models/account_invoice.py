@@ -766,6 +766,9 @@ class taxdemedida(models.Model):
     #_name = 'account.tax'
     _inherit = 'account.tax'
 
+    rte_fuente = fields.Boolean('Retencion de Fuente')
+    rte_iva = fields.Boolean('Retencion de IVA')
+    rte_ica = fields.Boolean('Retencion de ICA')
     tipo_impuesto = fields.Selection(
         selection=[('1', 'IVA'), 
                    ('2', 'Impuesto al consumo'),
@@ -774,6 +777,7 @@ class taxdemedida(models.Model):
         string=_('Tipo de Impuesto'),
     )
 
+ 
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
