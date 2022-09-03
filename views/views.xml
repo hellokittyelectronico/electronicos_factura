@@ -252,6 +252,20 @@
 
                   	<!-- <button name="action_cfdi_cancel" type="object" string="Cancelar CFDI" attrs="{'invisible':[ ('estado_factura','=','factura_cancelada')]}" class="oe_highlight" groups="base.group_user"/> -->
 
+     
+<record id="informes_retenciones" model="ir.ui.view">
+    <field name="name">informes_retenciones</field>
+    <field name="model">account.tax</field>
+    <field name="inherit_id" ref="account.view_tax_form"/>
+    <field name="arch" type="xml">
+        <field name="name" position="after">
+            <field name="rte_fuente"/>
+            <field name="rte_iva"/>
+            <field name="rte_ica"/>
+        </field>
+    </field>
+</record>
+     
      <record model="ir.ui.view" id="calidades_report_tree">
         <field name="name">RUT - Responsabilidades, Calidades y Atributos</field>
         <field name="model">account.calidadess</field>
