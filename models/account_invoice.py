@@ -442,9 +442,9 @@ class AccountMove(models.Model):
         for rete in self.line_ids:
             if rete.tax_line_id.rte_iva or rete.tax_line_id.rte_fuente or rete.tax_line_id.rte_ica:
                 rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
-                'porcentaje': "{:.2f}".format(tax_id.amount*-1),
+                'porcentaje': "{:.4f}".format(tax_id.amount*-1),
                 'valor_base': t_amount_wo_tax,
-                'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
+                'valor_retenido':  "{:.4f}".format(tax['amount']*-1)})
         return invoice_lines,valorimpuestos,tax_grouped,rete_items
 
     def to_json(self):
