@@ -330,7 +330,7 @@
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">fecha_cambio</field>
         <field name="categoria">factura</field>
-        <field name="obligatorio">true</field>
+        <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.currency_id.date</field>
         <field name="detalle">fecha cambio moneda</field>
     </record>
