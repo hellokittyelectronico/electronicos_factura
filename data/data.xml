@@ -592,6 +592,24 @@
         <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.journal_id.code_refund</field>
         <field name="detalle">codigo refund nota credito</field>
+
+    <record id="facturan0b69" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">cufe_factura_nc</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura.cufe</field>
+        <field name="detalle">cufe factura de la nota credito</field>
+    </record>
+
+    <record id="facturan0b70" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">code_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.code_refund</field>
+        <field name="detalle">codigo refund nota credito</field>
+        
     </record>
 
 
