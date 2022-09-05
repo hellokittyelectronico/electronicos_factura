@@ -22,10 +22,8 @@ class AccountMove(models.Model):
     grafica_link = fields.Char('pdf')
     factura_electronica = fields.Boolean('Factura Electronica')
     nota_debito = fields.Selection(
-        selection=[('1', '1 Intereses'), 
-                   ('2', '2 Gastos por cobrar'), 
-                   ('3', '3 Cambio del valor'),
-                   ('4', '4 Otro'),],
+        selection=[('30', '30 Nota Débito que referencia una factura electrónica.'), 
+                   ('32', '32 Nota Débito sin referencia a facturas'),],
         string=_('Tipo de Nota debito'),
     )
     nota_credito = fields.Selection(
@@ -37,7 +35,7 @@ class AccountMove(models.Model):
                    ('6', '6 Otros'), ],
         string=_('Tipo de Nota credito'),
     )
-    factura = fields.Many2one('account.move', domain="[('estado_factura', 'in', ('factura_correcta','a'))]")#,relation='partner_delivery_partner_rel',column1="id", column2="id2"
+    
     tipoc_o_d = fields.Char('tipo')
     tipo_comprobante = fields.Selection(
         selection=[('I', 'Ingreso'), 
@@ -102,14 +100,20 @@ class AccountMove(models.Model):
         default ='10'
     )
     xml_invoice_link = fields.Char(string=_('XML Invoice Link'))
-    estado_factura = fields.Selection(
-        selection=[('factura_no_generada', 'Factura no generada'), ('factura_correcta', 'Factura correcta'), 
-                   ('problemas_factura', 'Problemas con la factura'), ('solicitud_cancelar', 'Cancelación en proceso'),
-                   ('cancelar_rechazo', 'Cancelación rechazada'), ('factura_cancelada', 'Factura cancelada'), ],
-        string=_('Estado de factura'),
-        default='factura_no_generada',
-        readonly=False
-    )
+    # estado_factura = fields.Selection(
+    #     selection=[('factura_no_generada', 'Factura no generada'), ('factura_correcta', 'Factura correcta'), 
+    #                ('problemas_factura', 'Problemas con la factura'), ('solicitud_cancelar', 'Cancelación en proceso'),
+    #                ('cancelar_rechazo', 'Cancelación rechazada'), ('factura_cancelada', 'Factura cancelada'), ],
+    #     string=_('Estado de factura'),
+    #     default='factura_no_generada',
+    #     readonly=False
+    # )
+    estado_factura = fields.Selection([
+        ('no_generada', 'No_generada'),
+        ('Generada_correctamente', 'Generada_correctamente'),
+        ('Generada_con_errores', 'Generada_con_errores'),
+    ], string='Estado',default="no_generada")
+    factura = fields.Many2one('account.move', domain="[('estado_factura', 'in', ('Generada_correctamente','a'))]")#,relation='partner_delivery_partner_rel',column1="id", column2="id2"
     pdf_cdfi_invoice = fields.Binary("CDFI Invoice")
     qrcode_image = fields.Binary("QRCode")
     regimen_fiscal = fields.Selection(
@@ -123,11 +127,7 @@ class AccountMove(models.Model):
     nombre_not = fields.Char(string=_('Nombre nota'))
     checkin = fields.Char(string=_('Checkin'))
     checkout = fields.Char(string=_('Checkout'))
-    estado_factura = fields.Selection([
-        ('no_generada', 'No_generada'),
-        ('Generada_correctamente', 'Generada_correctamente'),
-        ('Generada_con_errores', 'Generada_con_errores'),
-    ], string='Estado',default="no_generada")
+    
     impreso = fields.Boolean("Impreso?")
     # FechaGen = fields.Char('Fecha Generacion')
     # HoraGen = fields.Char('Hora Generacion')
@@ -228,10 +228,10 @@ class AccountMove(models.Model):
         valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
         response2={}
         valores_lineas = valores.mp_id
+        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id)])
         print("haber")
         print(self.journal_id)
-        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id)])
-        print(documento)
+        print(documento.tipo_factura)
         if documento:
             if self.move_type == "out_invoice" and documento.tipo_factura == "factura":
                 self.tipo_documento = documento.tipo_factura
@@ -243,6 +243,8 @@ class AccountMove(models.Model):
                 self.tipo_documento = "Nota Credito Doc soporte"
             elif self.move_type == "out_invoice" and documento.tipo_factura == "nota_debito_factura":
                 self.tipo_documento = documento.tipo_factura
+                
+                
         # datos_generales = self.env['electronicos_factura.datos_generales'].search([('diario', '=', self.journal_id[0].id)])
         # if datos_generales: 
         #     self.tipo_documento = "soporte"
@@ -384,6 +386,7 @@ class AccountMove(models.Model):
         num = 0
         invoice_lines = []
         tax_grouped = {}
+        rete_grouped = {}
         valorimpuestos = 0
         t_amount_wo_tax = 0
         for line in self.invoice_line_ids:
@@ -425,8 +428,30 @@ class AccountMove(models.Model):
                     else:
                         tax_grouped[key]['amount'] += val['amount']
                         tax_grouped[key]['base'] += this_amount
+                # for rete in self.line_ids:
+                if tax_id.rte_iva or tax_id.rte_fuente or tax_id.rte_ica:
+                    key = tax['id']
+                    val2 = {'rte_fuente': tax_id.rte_fuente,
+                    'rte_iva': tax_id.rte_iva,
+                    'rte_ica': tax_id.rte_ica,
+                    'name': tax_id.name, #tax_group_id.
+                    'tax_id': tax['id'],
+                    'porcentaje': "{:.4f}".format(tax_id.amount*-1),
+                    'valor_base': this_amount,
+                    'amount': tax['amount'],
+                    'valor_retenido': tax['amount']*-1,}
+                    if key not in rete_grouped:
+                        rete_grouped[key] = val2
+                    else:
+                        rete_grouped[key]['valor_base'] += this_amount
+                        rete_grouped[key]['valor_retenido'] += tax['amount']*-1
+                    # rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
+                    # 'porcentaje': "{:.4f}".format(tax_id.amount*-1),
+                    # 'valor_base': this_amount,
+                    # 'valor_retenido':  "{:.4f}".format(tax['amount']*-1)})
             valorimpuestos += valorimpuesto 
-            t_amount_wo_tax += this_amount
+            # t_amount_wo_tax += this_amount
+
             invoice_lines.append({'numero_linea':num,
                                 'codigo':line.product_id.default_code,
                                 'cantidad': line.quantity,
@@ -436,16 +461,11 @@ class AccountMove(models.Model):
                                 'descuento':line.discount,
                                 'descripcion': line.name[:1000],
                                 'taxes': tax_items,
-                                'rete_items':rete_items,
+                                #'rete_items':rete_items,
                                 'periodo_fecha':line.periodo_fecha,
                                 'periodo_codigo':line.periodo_codigo})
-        for rete in self.line_ids:
-            if rete.tax_line_id.rte_iva or rete.tax_line_id.rte_fuente or rete.tax_line_id.rte_ica:
-                rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
-                'porcentaje': "{:.4f}".format(tax_id.amount*-1),
-                'valor_base': t_amount_wo_tax,
-                'valor_retenido':  "{:.4f}".format(tax['amount']*-1)})
-        return invoice_lines,valorimpuestos,tax_grouped,rete_items
+        
+        return invoice_lines,valorimpuestos,tax_grouped,rete_grouped
 
     def to_json(self):
         totalDays =100
@@ -479,7 +499,7 @@ class AccountMove(models.Model):
                         print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
-                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas()
+                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas() #
                     elif linea.campo_tecnico.strip() == "totales":
                         send["valorsinimpuestos"] =self.amount_untaxed
                     elif linea.campo_tecnico.strip() == "valor_impuestos":

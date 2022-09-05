@@ -111,7 +111,7 @@ class partner_fact(models.Model):
                    ('5', _('5- Generica')),
                    ('6', _('6- Generica con pago anticipado')),
                    ('7', _('7- Generica con periodo de facturacion')),
-                   ('8', _('8- Consorcio')),
+                   ('8', _('8- Con    sorcio')),
                    ('9', _('9- Servicios AIU')),
                    ('10', _('10- Estandar')),],
         string=_('Tipo de factura'),
