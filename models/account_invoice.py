@@ -436,7 +436,7 @@ class AccountMove(models.Model):
                     'rte_ica': tax_id.rte_ica,
                     'name': tax_id.name, #tax_group_id.
                     'tax_id': tax['id'],
-                    'porcentaje': "{:.4f}".format(tax_id.amount*-1),
+                    'porcentaje': "{:.2f}".format(tax_id.amount*-1),
                     'valor_base': this_amount,
                     'amount': tax['amount'],
                     'valor_retenido': tax['amount']*-1,}
@@ -602,7 +602,7 @@ class AccountMove(models.Model):
                     lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
                     #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
                     folio = self.factura.name[lon_prefix:long_total] 
-                    send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura"}
+                    send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":"factura"}
                     cufe = self.pedircufe(send,urlini)
                     print(cufe)
                     self.factura.write({"cufe":cufe['cufe']})
