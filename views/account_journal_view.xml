@@ -19,6 +19,8 @@
 			<field name="arch" type="xml">
 				<field name="default_account_id" position="after">
 					<field name="code_refund"/>
+					<field name="number_refund_from"/>
+					<field name="number_refund_to"/>
 					<field name="secure_sequence_id"  />
 				</field>
 			</field>

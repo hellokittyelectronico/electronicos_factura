@@ -623,4 +623,22 @@
         
     </record>
 
+
+    <record id="facturan0b74" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">ini_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.number_refund_to</field>
+        <field name="detalle">Inicio numeracion refund</field>
+    </record>
+
+    <record id="facturan0b75" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">fin_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.number_refund_from</field>
+        <field name="detalle">Fin numeracion refund</field>
+    </record>
 </odoo>

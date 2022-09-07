@@ -48,6 +48,7 @@ class IrSequence(models.Model):
         ('pos_invoice', 'POS Invoice')],
         'Type', required=True, default='invoice_computer_generated')
     dian_resolution_ids = fields.One2many('ir.sequence.dian_resolution', 'sequence_id', 'DIAN Resolutions')
+    # dian_resolution_refund_ids = fields.One2many('ir.sequence.dian_resolution', 'sequence_id2', 'DIAN Resolutions refund')
 
     _defaults = {
         'remaining_numbers': 400,
@@ -176,6 +177,7 @@ class IrSequenceDianResolution(models.Model):
                                  string='Next Number', required=True, default=1, help="Next number of this sequence")
     active_resolution = fields.Boolean('Active resolution', required=False)
     sequence_id = fields.Many2one("ir.sequence", 'Main Sequence', required=True, ondelete='cascade')
+    
 
     def _next(self):
         #number_next = self.env['ir.sequence']._update_nogap(self, 1)

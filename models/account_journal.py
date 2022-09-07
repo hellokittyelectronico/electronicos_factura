@@ -20,7 +20,8 @@ class AccountJournal(models.Model):
     invoice_comment = fields.Html(
         string="Invoice Comment"
     )
-
+    number_refund_from = fields.Integer('inicio refund', required=True)
+    number_refund_to = fields.Integer('fin refund', required=True)
     
 
 

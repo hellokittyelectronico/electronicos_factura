@@ -33,6 +33,7 @@
                         <field name="active_resolution" />
                     </tree>
                 </field>
+                
             </xpath>
         </field>
     </record>

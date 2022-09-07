@@ -336,9 +336,9 @@
             <xpath expr="//field[@name='reason']" position="after">
                 <field name="nota_credito" string="Tipo de Nota"  required='True'/>
             </xpath>
-            <xpath expr="//field[@name='journal_id']" position="replace">
+            <!-- <xpath expr="//field[@name='journal_id']" position="replace">
                  <field name="journal_id" style="display:none;"/>
-            </xpath>
+            </xpath> -->
         </field>
     </record>
    
