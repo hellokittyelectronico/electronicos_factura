@@ -565,7 +565,7 @@
         <field name="name">factura_nc</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
-        <field name="campo_tecnico">self.factura</field>
+        <field name="campo_tecnico">self.factura.name</field>
         <field name="detalle">la factura de la nota credito</field>
     </record>
     <record id="facturan0b68" model="base_electronicos.line">

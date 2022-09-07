@@ -125,8 +125,12 @@
                                 </group>-->
                             </group>
                     </page>
-                    <page name="info_cdfi" string="Nota Crédito doc soporte" attrs="{'invisible':[('tipo_documento','!=','Nota Credito Documento soporte')]}">
+                    <page name="info_cdfi" string="Nota Crédito doc soporte" attrs="{'invisible':[('tipo_documento','!=','Nota Credito Doc soporte')]}">
                             <group cols="4">
+                                <group  string="Detalles de Nota Crédito" >
+                                    <field name="nota_credito"/>
+                                    <field name="factura"/>
+                                </group>
                                 <group string="Detalles de Pago">
                                 <field name="tipo_documento" invisible='1'/>
                                 <field name="tipoc_o_d" invisible='1'/>
