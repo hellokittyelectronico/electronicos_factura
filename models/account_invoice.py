@@ -382,7 +382,7 @@ class AccountMove(models.Model):
             invoice.message_post(body="CFDI emitido")
         return True
     
-    def veybuscalineas(self):
+    def veybuscalineas(self,tipo_documento):
         num = 0
         invoice_lines = []
         tax_grouped = {}
@@ -436,7 +436,7 @@ class AccountMove(models.Model):
                     'rte_ica': tax_id.rte_ica,
                     'name': tax_id.name, #tax_group_id.
                     'tax_id': tax['id'],
-                    'porcentaje': "{:.2f}".format(tax_id.amount*-1),
+                    'porcentaje': "{:.4f}".format(tax_id.amount*-1) if tipo_documento == "factura" else "{:.2f}".format(tax_id.amount*-1),
                     'valor_base': this_amount,
                     'amount': tax['amount'],
                     'valor_retenido': tax['amount']*-1,}
@@ -499,7 +499,7 @@ class AccountMove(models.Model):
                         print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
-                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas() #
+                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas(self.tipo_documento) #
                     elif linea.campo_tecnico.strip() == "totales":
                         send["valorsinimpuestos"] =self.amount_untaxed
                     elif linea.campo_tecnico.strip() == "valor_impuestos":
