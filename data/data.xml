@@ -235,7 +235,7 @@
         <field name="name">codigo_estado_partner</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.partner_id.state_id.code</field>
+        <field name="campo_tecnico">self.partner_id.city_id.code</field>
         <field name="detalle">codigo estado partner</field>
     </record>
     <record id="facturan0b29" model="base_electronicos.line">
@@ -251,7 +251,7 @@
         <field name="name">codigo_ciudad_partner</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.partner_id.city_id.code</field>
+        <field name="campo_tecnico">self.partner_id.zip</field>
         <field name="detalle">codigo ciudad partner</field>
     </record>
     <record id="facturan0b31" model="base_electronicos.line">
