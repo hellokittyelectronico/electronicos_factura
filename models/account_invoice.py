@@ -445,10 +445,10 @@ class AccountMove(models.Model):
                     else:
                         rete_grouped[key]['valor_base'] += this_amount
                         rete_grouped[key]['valor_retenido'] += tax['amount']*-1
-                    # rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
-                    # 'porcentaje': "{:.4f}".format(tax_id.amount*-1),
-                    # 'valor_base': this_amount,
-                    # 'valor_retenido':  "{:.4f}".format(tax['amount']*-1)})
+                    rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
+                    'porcentaje': "{:.4f}".format(tax_id.amount*-1),
+                    'valor_base': this_amount,
+                    'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
             valorimpuestos += valorimpuesto 
             # t_amount_wo_tax += this_amount
 
@@ -461,7 +461,7 @@ class AccountMove(models.Model):
                                 'descuento':line.discount,
                                 'descripcion': line.name[:1000],
                                 'taxes': tax_items,
-                                #'rete_items':rete_items,
+                                'rete_items':rete_items,
                                 'periodo_fecha':line.periodo_fecha,
                                 'periodo_codigo':line.periodo_codigo})
         

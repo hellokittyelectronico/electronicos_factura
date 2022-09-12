@@ -251,7 +251,7 @@
         <field name="name">codigo_ciudad_partner</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.partner_id.zip</field>
+        <field name="campo_tecnico">self.partner_id.city_id.code</field>
         <field name="detalle">codigo ciudad partner</field>
     </record>
     <record id="facturan0b31" model="base_electronicos.line">
@@ -639,6 +639,15 @@
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.journal_id.number_refund_from</field>
+        <field name="detalle">Fin numeracion refund</field>
+    </record>
+
+    <record id="facturan0b76" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">codigo_zip_partner</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.partner_id.zip</field>
         <field name="detalle">Fin numeracion refund</field>
     </record>
 </odoo>
