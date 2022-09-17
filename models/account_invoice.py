@@ -12,20 +12,17 @@ from datetime import datetime, timedelta
 from datetime import time as datetime_time
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
+    _inherit = 'account.invoice'
     #_inherit = 'account.move' 
 
     codigo_qr = fields.Char('codigo_qr')                       
-    cufe = fields.Char('cufe')   
-    factura_cfdi = fields.Boolean("si si o no")
+    cufe = fields.Char('cufe')               
     rechazo = fields.Char('rechazo')                       
     grafica_link = fields.Char('pdf')
     factura_electronica = fields.Boolean('Factura Electronica')
     nota_debito = fields.Selection(
-        selection=[('1', '1 Intereses'), 
-                   ('2', '2 Gastos por cobrar'), 
-                   ('3', '3 Cambio del valor'),
-                   ('4', '4 Otro'),],
+        selection=[('30', '30 Nota Débito que referencia una factura electrónica.'), 
+                   ('32', '32 Nota Débito sin referencia a facturas'),],
         string=_('Tipo de Nota debito'),
     )
     nota_credito = fields.Selection(
@@ -37,7 +34,7 @@ class AccountMove(models.Model):
                    ('6', '6 Otros'), ],
         string=_('Tipo de Nota credito'),
     )
-    factura = fields.Many2one('account.move', domain="[('estado_factura', 'in', ('factura_correcta','a'))]")#,relation='partner_delivery_partner_rel',column1="id", column2="id2"
+    factura = fields.Many2one('account.invoice')#domain="[('estado_factura', 'in', ('factura_correcta','a'))]",relation='partner_delivery_partner_rel',column1="id", column2="id2"
     tipoc_o_d = fields.Char('tipo')
     tipo_comprobante = fields.Selection(
         selection=[('I', 'Ingreso'), 
@@ -45,38 +42,38 @@ class AccountMove(models.Model):
                     ('T', 'Traslado'),],
         string=_('Tipo de comprobante'),
     )
-    #forma_pago = fields.Selection(
+    #forma_pago = fields.Selection(  
     tipo_pago = fields.Selection(    
-        selection=[#('1', '1 - Instrumento no definido'), 
-                   #('2', '2 - Crédito ACH'), 
-                   #('3', '3 - Débito ACH'),
-                   #('4', '4 - Reversión débito de demanda ACH'), 
-                   #('5', '5 - Reversión crédito de demanda ACH'),
-                   #('6', '6 - Crédito de demanda ACH'), 
-                   #('7', '7 - Débito de demanda ACH'), 
-                   #('8', '8 - Mantener'), 
-                   #('9', '9 - Clearing Nacional o Regional'), 
+        selection=[('1', '1 - Instrumento no definido'), 
+                   ('2', '2 - Crédito ACH'), 
+                   ('3', '3 - Débito ACH'),
+                   ('4', '4 - Reversión débito de demanda ACH'), 
+                   ('5', '5 - Reversión crédito de demanda ACH'),
+                   ('6', '6 - Crédito de demanda ACH'), 
+                   ('7', '7 - Débito de demanda ACH'), 
+                   ('8', '8 - Mantener'), 
+                   ('9', '9 - Clearing Nacional o Regional'), 
                    ('10', '10 - Efectivo'), 
-                   #('11', '11 - Reversión Crédito Ahorro'), 
-                   #('12', '12 - Reversión Débito Ahorro'), 
-                   #('13', '13 - Crédito Ahorro'), 
-                   #('14', '14 - Débito Ahorro'), 
-                   #('15', '15 - Bookentry Crédito'), 
-                   #('16', '16 - Bookentry Débito'), 
-                   #('17', '17 - Concentración de la demanda en efectivo /Desembolso Crédito (CCD)'), 
-                   #('18', '18 - Concentración de la demanda en efectivo / Desembolso (CCD) débito'),
-                   #('19', '19 - Crédito Pago negocio corporativo (CTP)'), 
+                   ('11', '11 - Reversión Crédito Ahorro'), 
+                   ('12', '12 - Reversión Débito Ahorro'), 
+                   ('13', '13 - Crédito Ahorro'), 
+                   ('14', '14 - Débito Ahorro'), 
+                   ('15', '15 - Bookentry Crédito'), 
+                   ('16', '16 - Bookentry Débito'), 
+                   ('17', '17 - Concentración de la demanda en efectivo /Desembolso Crédito (CCD)'), 
+                   ('18', '18 - Concentración de la demanda en efectivo / Desembolso (CCD) débito'),
+                   ('19', '19 - Crédito Pago negocio corporativo (CTP)'), 
                    ('20', '20 - Cheque'), 
-                   #('21', '21 - Poyecto bancario'), 
-                   #('22', '22 - Proyecto bancario certificado'), 
-                   #('23', '23 - Cheque bancario'), 
-                   #('24', '24 - Nota cambiaria esperando aceptación'), 
-                   #('25', '25 - Cheque certificado'), 
-                   #('26', '26 - Cheque Local'), 
-                   #('27', '27 - Débito Pago Neogcio Corporativo (CTP)'), 
-                   #('28', '28 - Crédito Negocio Intercambio Corporativo (CTX)'), 
-                   #('29', '29 - Débito Negocio Intercambio Corporativo (CTX)'), 
-                   #('30', '30 - Transferecia Crédito'), 
+                   ('21', '21 - Poyecto bancario'), 
+                   ('22', '22 - Proyecto bancario certificado'), 
+                   ('23', '23 - Cheque bancario'), 
+                   ('24', '24 - Nota cambiaria esperando aceptación'), 
+                   ('25', '25 - Cheque certificado'), 
+                   ('26', '26 - Cheque Local'), 
+                   ('27', '27 - Débito Pago Neogcio Corporativo (CTP)'), 
+                   ('28', '28 - Crédito Negocio Intercambio Corporativo (CTX)'), 
+                   ('29', '29 - Débito Negocio Intercambio Corporativo (CTX)'), 
+                   ('30', '30 - Transferecia Crédito'), 
                    ('42', '42 - Consignación bancaria'), 
                    ('ZZZ', 'ZZZ - Acuerdo mutuo'),],
         string=_('Tipo de pago'), default='10'
@@ -97,7 +94,8 @@ class AccountMove(models.Model):
                    ('7', _('7- Generica con periodo de facturacion')),
                    ('8', _('8- Consorcio')),
                    ('9', _('9- Servicios AIU')),
-                   ('10', _('10- Estandar')),],
+                   ('10', _('10- Estandar')),
+                   ('11', _('11- Mandato')),],
         string=_('Tipo de factura'),
         default ='10'
     )
@@ -107,9 +105,8 @@ class AccountMove(models.Model):
                    ('problemas_factura', 'Problemas con la factura'), ('solicitud_cancelar', 'Cancelación en proceso'),
                    ('cancelar_rechazo', 'Cancelación rechazada'), ('factura_cancelada', 'Factura cancelada'), ],
         string=_('Estado de factura'),
-        default='factura_no_generada',
-        readonly=False
-    )
+        default='factura_no_generada'
+    )#,readonly=True
     pdf_cdfi_invoice = fields.Binary("CDFI Invoice")
     qrcode_image = fields.Binary("QRCode")
     regimen_fiscal = fields.Selection(
@@ -123,12 +120,25 @@ class AccountMove(models.Model):
     nombre_not = fields.Char(string=_('Nombre nota'))
     checkin = fields.Char(string=_('Checkin'))
     checkout = fields.Char(string=_('Checkout'))
-    estado_factura = fields.Selection([
-        ('no_generada', 'No_generada'),
-        ('Generada_correctamente', 'Generada_correctamente'),
-        ('Generada_con_errores', 'Generada_con_errores'),
-    ], string='Estado',default="no_generada")
-    impreso = fields.Boolean("Impreso?")
+    fecha_name = fields.Date("Fecha orden") #,default=datetime.today()
+    agregar_sura = fields.Boolean("Agregar línea de negocio SURA")
+    fecha_y_hora = fields.Datetime("Fecha orden")
+    num_ocr = fields.Char(string=_('Numero'))
+    negocios_sura = fields.Selection(
+        selection=[('LR-FINANCIACION_POLIZAS', 'LR-FINANCIACION_POLIZAS'), 
+                   ('LR-ACCIDENTES_PERSONALES', 'LR-ACCIDENTES_PERSONALES'), 
+                   ('LR-INTERMEDIACION', 'LR-INTERMEDIACION'),
+                   ('LR-CUENTAS_MEDICAS_NO_PBS', 'LR-CUENTAS_MEDICAS_NO_PBS'),
+                   ('LR-CUENTAS_MEDICAS_PBS', 'LR-CUENTAS_MEDICAS_PBS'), 
+                   ('LR-CUENTAS_MEDICAS', 'LR-CUENTAS_MEDICAS'), 
+                   ('LR-JUVENIL', 'LR-JUVENIL'),
+                   ('LR-PREPAGADA', 'LR-PREPAGADA'),
+                   ('LR-PREVENCION', 'LR-PREVENCION'), 
+                   ('LR-RECLAMACIONES GENERALES', 'LR-RECLAMACIONES GENERALES'), 
+                   ('LR-CUENTAS_MEDICAS_SALUD', 'LR-CUENTAS_MEDICAS_SALUD'),
+                   ('LR-SOAT', 'LR-SOAT'),],
+        string=_('Nombre'),
+    )
     # FechaGen = fields.Char('Fecha Generacion')
     # HoraGen = fields.Char('Hora Generacion')
     # id_plataforma = fields.Char('id_plataforma')
@@ -148,94 +158,19 @@ class AccountMove(models.Model):
         ('Nota_credito_Documento_soporte', 'Nota_credito_Documento_soporte'),
     ], string='Tipo documento')
 
-    calidades_atributos = fields.Many2many("account.calidadess")
-    usuario_aduanero = fields.Many2many("account.aduaneros")    
-    @api.onchange('partner_id', 'company_id')
-    def _onchange_partner_id(self):
-        account_id = False
-        payment_term_id = False
-        fiscal_position = False
-        bank_id = False
-        tipo_pago = '10'
-        tipo_factura = '1'
-        metodo_pago = '10'
-        warning = {}
-        domain = {}
-        company_id = self.company_id.id
-        p = self.partner_id if not company_id else self.partner_id #.with_context(force_company=company_id) #with_company(company_id)#
-        type = self.move_type
-        if p:
-            rec_account = p.property_account_receivable_id
-            pay_account = p.property_account_payable_id
-            if not rec_account and not pay_account:
-                action = self.env.ref('account.action_account_config')
-                msg = _('Cannot find a chart of accounts for this company, You should configure it. \nPlease go to Account Configuration.')
-                raise RedirectWarning(msg, action.id, _('Go to the configuration panel'))
-
-            if type in ('in_invoice', 'in_refund'):
-                account_id = pay_account.id
-                payment_term_id = p.property_supplier_payment_term_id.id
-            else:
-                account_id = rec_account.id
-                payment_term_id = p.property_payment_term_id.id
-            
-            delivery_partner_id = self.partner_id.id #self.get_delivery_partner_id()
-            fiscal_position = self.env['account.fiscal.position'].get_fiscal_position(self.partner_id.id, delivery_id=delivery_partner_id)
-
-            if p.tipo_factura:
-                tipo_factura = p.tipo_factura
-            if p.tipo_pago:
-                tipo_pago = p.tipo_pago
-            if p.metodo_pago:
-                metodo_pago = p.metodo_pago
-            # If partner has no warning, check its company
-            if p.invoice_warn == 'no-message' and p.parent_id:
-                p = p.parent_id
-            if p.invoice_warn != 'no-message':
-                # Block if partner only has warning but parent company is blocked
-                if p.invoice_warn != 'block' and p.parent_id and p.parent_id.invoice_warn == 'block':
-                    p = p.parent_id
-                warning = {
-                    'title': _("Warning for %s") % p.name,
-                    'message': p.invoice_warn_msg
-                    }
-                if p.invoice_warn == 'block':
-                    self.partner_id = False
-
-        # self.account_id = account_id
-        # self.payment_term_id = payment_term_id
-        self.invoice_date = False
-        self.fiscal_position_id = fiscal_position
-
-        self.tipo_factura = tipo_factura
-        self.tipo_pago = tipo_pago
-        # self.metodo_pago = metodo_pago
-
-        if type in ('in_invoice', 'out_refund'):
-            bank_ids = p.commercial_partner_id.bank_ids
-            bank_id = bank_ids[0].id if bank_ids else False
-            self.partner_bank_id = bank_id
-            domain = {'partner_bank_id': [('id', 'in', bank_ids.ids)]}
-
-        res = {}
-        if warning:
-            res['warning'] = warning
-        if domain:
-            res['domain'] = domain
-        return res
-
-
+    #@api.one
     @api.depends('journal_id')
     def documento(self):
         valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
         response2={}
         valores_lineas = valores.mp_id
         print("haber")
-        print(self.journal_id)
-        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id)])
-        print(documento)
-        if documento:
-            self.tipo_documento = documento.tipo_factura
+        # print(self.journal_id[0])
+        for docu in self: 
+            documento = valores.general_factura.search([('diario', '=', docu.journal_id[0].id)])
+            print(documento)
+            if documento:
+                docu.tipo_documento = documento.tipo_factura
             
         # datos_generales = self.env['electronicos_factura.datos_generales'].search([('diario', '=', self.journal_id[0].id)])
         # if datos_generales: 
@@ -243,104 +178,11 @@ class AccountMove(models.Model):
         # if datos_generales: 
         #     self.tipo_documento = "factura"
     #@api.multi
-    @api.returns('self')
-    def refund(self, invoice_date=None, date=None, description=None, journal_id=None,nota_credito=None):
-        new_invoices = self.browse()
-        for invoice in self:
-            # create the new invoice
-            values = self._prepare_refund(invoice, invoice_date=invoice_date, date=date,
-                                    description=description, journal_id=journal_id,nota_credito=nota_credito)
-            refund_invoice = self.create(values)
-            invoice_type = {'out_invoice': ('customer invoices credit note'),
-                'in_invoice': ('vendor bill credit note')}
-            message = _("This %s has been created from: <a href=# data-oe-model=account.move data-oe-id=%d>%s</a>") % (invoice_type[invoice.type], invoice.id, invoice.number)
-            refund_invoice.message_post(body=message)
-            new_invoices += refund_invoice
-        return new_invoices
-
-    @api.model
-    def _prepare_refund(self, invoice, invoice_date=None, date=None, description=None, journal_id=None,nota_credito=None):
-        values = super(AccountInvoice, self)._prepare_refund(invoice, invoice_date=invoice_date, 
-                                                           date=date, description=description, journal_id=journal_id)
-        if invoice.estado_factura == 'generada_correctamente':
-            # values['uuid_relacionado'] = invoice.folio_fiscal
-            # values['methodo_pago'] = invoice.methodo_pago
-            # values['tipo_pago'] = invoice.tipo_pago
-            # values['tipo_comprobante'] = 'E'
-            # values['uso_cfdi'] = 'G02'
-            # values['tipo_relacion'] = '01'
-            values['nota_credito'] = nota_credito
-            values['factura'] = invoice.id
-
-        return values
-
-    # @api.model
-    # def refund(self, invoice_date=None, date=None, description=None, journal_id=None):
-    #     values = super(AccountInvoice, self).refund(invoice, invoice_date=invoice_date, 
-    #                                                        date=date, description=description, journal_id=journal_id)
-    #     if invoice.estado_factura == 'factura_correcta':
-    #         # values['uuid_relacionado'] = invoice.folio_fiscal
-    #         # values['methodo_pago'] = invoice.methodo_pago
-    #         # values['tipo_pago'] = invoice.tipo_pago
-    #         # values['tipo_comprobante'] = 'E'
-    #         # values['uso_cfdi'] = 'G02'
-    #         # values['tipo_relacion'] = '01'
-    #         values['nota_debito'] = nota_debito
-
-    #     return values
-
-    #@api.one
-    @api.returns('self', lambda value: value.id)
-    def copy(self, default=None):
-        default = dict(default or {})
-        if self.estado_factura == 'factura_correcta' or self.estado_factura == 'factura_cancelada':
-            default['estado_factura'] = 'factura_no_generada'
-            #default['folio_fiscal'] = ''
-            default['fecha_factura'] = None
-            default['factura_cfdi'] = False
-        return super(AccountInvoice, self).copy(default=default)
-    
-    #@api.one
-    @api.depends('number')
-    def _get_number_folio(self):
-        if self.number:
-            self.number_folio = self.number.replace('INV','').replace('/','')
-
-    #@api.one        
-    @api.depends('amount_total', 'currency_id')
-    def _get_amount_to_text(self):
-        self.amount_to_text = amount_to_text_es_MX.get_amount_to_text(self, self.amount_total, 'es_cheque', self.currency_id.name)
-        
-    @api.model
-    def _get_amount_2_text(self, amount_total):
-        return amount_to_text_es_MX.get_amount_to_text(self, amount_total, 'es_cheque', self.currency_id.name)
-
-    #@api.multi
-    @api.onchange('payment_term_id')
-    def _get_metodo_pago(self):
-        return
-        # if self.payment_term_id:
-        #     if self.payment_term_id.methodo_pago == 'PPD':
-        #         values = {
-        #          'methodo_pago': self.payment_term_id.methodo_pago,
-        #          'tipo_pago': '99'
-        #         }
-        #     else:
-        #         values = {
-        #             'methodo_pago': self.payment_term_id.methodo_pago,
-        #             'tipo_pago': False
-        #             }
-        # else:
-        #     values = {
-        #         'methodo_pago': False,
-        #         'tipo_pago': False
-        #         }
-        # self.update(values)
     
 
     
-    #@api.multi
-    def generate_cfdi_invoice(self):
+    @api.multi
+    def generate_cfdi_invoice2(self):
         # after validate, send invoice data to external system via http post
         for invoice in self:
             if estado_factura == 'factura_correcta':
@@ -378,12 +220,13 @@ class AccountMove(models.Model):
         num = 0
         invoice_lines = []
         tax_grouped = {}
+        rete_grouped = {}
         valorimpuestos = 0
         t_amount_wo_tax = 0
         for line in self.invoice_line_ids:
             num += 1
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            amounts = line.tax_ids.compute_all(price, line.currency_id, line.quantity, product=line.product_id, partner=line.move_id.partner_id)
+            amounts = line.invoice_line_tax_ids.compute_all(price, line.currency_id, line.quantity, product=line.product_id, partner=line.partner_id)
             amount_wo_tax = line.price_unit * line.quantity
             this_amount = price * line.quantity
             print(amounts)
@@ -406,7 +249,7 @@ class AccountMove(models.Model):
                     valorimpuesto += tax['amount']
                     incluido = tax['price_include']
                     tax_items.append(tax_item)
-                    val = {'move_id': line.move_id.id,
+                    val = {'move_id': line.id,
                     'name': tax_id.name, #tax_group_id.
                     'tax_id': tax['id'],
                     'codigo': int(tax_id.tipo_impuesto),
@@ -419,8 +262,30 @@ class AccountMove(models.Model):
                     else:
                         tax_grouped[key]['amount'] += val['amount']
                         tax_grouped[key]['base'] += this_amount
+                # for rete in self.line_ids:
+                if tax_id.rte_iva or tax_id.rte_fuente or tax_id.rte_ica:
+                    key = tax['id']
+                    val2 = {'rte_fuente': tax_id.rte_fuente,
+                    'rte_iva': tax_id.rte_iva,
+                    'rte_ica': tax_id.rte_ica,
+                    'name': tax_id.name, #tax_group_id.
+                    'tax_id': tax['id'],
+                    'porcentaje': "{:.4f}".format(tax_id.amount*-1) if tipo_documento == "factura" else "{:.2f}".format(tax_id.amount*-1),
+                    'valor_base': this_amount,
+                    'amount': tax['amount'],
+                    'valor_retenido': tax['amount']*-1,}
+                    if key not in rete_grouped:
+                        rete_grouped[key] = val2
+                    else:
+                        rete_grouped[key]['valor_base'] += this_amount
+                        rete_grouped[key]['valor_retenido'] += tax['amount']*-1
+                    rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
+                    'porcentaje': "{:.4f}".format(tax_id.amount*-1),
+                    'valor_base': this_amount,
+                    'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
             valorimpuestos += valorimpuesto 
-            t_amount_wo_tax += this_amount
+            # t_amount_wo_tax += this_amount
+
             invoice_lines.append({'numero_linea':num,
                                 'codigo':line.product_id.default_code,
                                 'cantidad': line.quantity,
@@ -430,16 +295,13 @@ class AccountMove(models.Model):
                                 'descuento':line.discount,
                                 'descripcion': line.name[:1000],
                                 'taxes': tax_items,
-                                'rete_items':rete_items})
-        for rete in self.line_ids:
-            if rete.tax_line_id.rte_iva or rete.tax_line_id.rte_fuente or rete.tax_line_id.rte_ica:
-                rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
-                'porcentaje': "{:.2f}".format(tax_id.amount*-1),
-                'valor_base': t_amount_wo_tax,
-                'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
-        return invoice_lines,valorimpuestos,tax_grouped,rete_items
+                                'rete_items':rete_items,
+                                'periodo_fecha':line.periodo_fecha,
+                                'periodo_codigo':line.periodo_codigo})
+        
+        return invoice_lines,valorimpuestos,tax_grouped,rete_grouped
 
-    def to_json(self):
+    def to_json2(self):
         totalDays =100
         numero =1
         send = {}
@@ -467,7 +329,7 @@ class AccountMove(models.Model):
                             return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                     elif linea.name.strip() == "fecha":
                         print("imprimiendo fecha")
-                        fecha =str(self.date.strftime("%Y-%m-%d"))
+                        fecha =self.date #str(self.date.strftime("%Y-%m-%d"))
                         print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
@@ -511,7 +373,7 @@ class AccountMove(models.Model):
         #send['credit_note']= self.credit_note
 
     #@api.multi
-    def envio_directo(self):
+    def envio_directo2(self):
         import time
         for invoice in self:
             if self.estado_factura == 'factura_correcta':
@@ -524,10 +386,11 @@ class AccountMove(models.Model):
             # self.FechaGen = str(now2.date())
             # self.HoraGen = str(current_time)
             urlini = "https://odoo15.navegasoft.com/admonclientes/objects/"
-            send,error = invoice.to_json()
+            print("to json")
+            send,error = invoice.to_json2()
             if error:
                 return send
-            else: 
+            else:
                 headers = {'content-type': 'application/json'}
                 print(send)
                 result = requests.post(urlini,headers=headers,data = json.dumps(send, indent=4, sort_keys=True, default=str))
@@ -542,7 +405,7 @@ class AccountMove(models.Model):
                                 print("final")
                                 print(resultado)
                                 final_text = json.loads(json.dumps(final))#eval()
-                                self.write({"impreso":False,"transaccionID":final_text['transactionID'],"estado_factura":"Generada_correctamente"})
+                                self.write({"impreso":False,"transaccionID":final_text['transactionID'],"estado_factura":"factura_correcta"})
                             return self.env['wk.wizard.message'].genrated_message(final_text['mensaje'],final_text['titulo'] ,final_text['link'])
                         else:
                             final_text = json.loads(json.dumps(final))#.encode().decode("utf-8") eval(
@@ -562,9 +425,9 @@ class AccountMove(models.Model):
                     return self.env['wk.wizard.message'].genrated_message('Existen problemas de coneccion debes reportarlo con navegasoft', 'Servidor')
 
 
-    def imprimir(self):
+    def imprimir2(self):
         for invoice in self:
-            name = invoice.name
+            name = invoice.number
             extension = ".pdf"
             name_ext = name+extension
             import re
@@ -572,19 +435,19 @@ class AccountMove(models.Model):
             print(name)
             #lista = re.findall("\d+", self.number)
             #number = lista[0]
-            if self.move_type == 'out_refund':
+            if self.type == 'out_refund':
                 lon_prefix = len(self.journal_id.refund_secure_sequence_id.prefix) 
-                prefi = self.journal_id.refund_secure_sequence_id.prefix #self.number[0:long_total-len(number)]
+                prefi = self.journal_id.refund_sequence_id.prefix #self.number[0:long_total-len(number)]
             else:
-                lon_prefix = len(self.journal_id.secure_sequence_id.prefix) 
-                prefi = self.journal_id.secure_sequence_id.prefix #self.number[0:long_total-len(number)]
+                lon_prefix = len(self.journal_id.sequence_id.prefix) 
+                prefi = self.journal_id.sequence_id.prefix #self.number[0:long_total-len(number)]
             number = name[lon_prefix:long_total]
         
         urlini = "https://odoo15.navegasoft.com/admonclientes/status/"
         headers = {'content-type': 'application/json'}
         send = {"id_plataforma":self.company_id.partner_id.id_plataforma,'password': self.company_id.partner_id.password,
         "transaccionID":self.transaccionID,"prefix":prefi,
-        "number":number,'documento_electronico':"factura"}#"ambiente":self.ambiente,
+        "number":number,'documento_electronico':"factura",'tipo_documento':self.tipo_documento}#"ambiente":self.ambiente,
         result = requests.post(urlini,headers=headers,data = json.dumps(send))
         #resultado = json.loads(result.text)
         #print(result.text)
@@ -622,7 +485,7 @@ class AccountMove(models.Model):
                         os.makedirs(model)
                     extension = ".pdf"
                     #file_path = "{0}{1}".format(module_path + src_model_path + str(name), extension)
-                    file_path = "{0}{1}".format(module_path + src_model_path + str(self.name), extension)
+                    file_path = "{0}{1}".format(module_path + src_model_path + str(self.number), extension)
                     if not (os.path.exists(file_path)):
                         size =1
                         if size == 0:
@@ -639,7 +502,7 @@ class AccountMove(models.Model):
                                 image_64_encode = base64.b64decode(final_data['documentBase64']) #eval(
                                 i64 = base64.b64encode(image_64_encode)
                                 print("self.name+extension")
-                                print(self.name+extension)
+                                print(self.number+extension)
                                 att_id = self.env['ir.attachment'].create({
                                     'name': self.name+extension,
                                     'type': 'binary',
@@ -664,30 +527,3 @@ class AccountMove(models.Model):
         else:
             raise Warning(result)
 
-
-class calidades(models.Model):
-    _name = 'account.calidadess'
-    
-    codigo = fields.Char("Codigo")
-    responsabilidad = fields.Char("Responsabilidad")
-    descripcion = fields.Text("Descripcion")
-
-
-class aduaneros(models.Model):
-    _name = 'account.aduaneros'
-    
-    codigo = fields.Char("Codigo")
-    responsabilidad = fields.Char("Responsabilidad")
-    descripcion = fields.Char("Descripcion")
-
-class taxdemedida(models.Model):
-    #_name = 'account.tax'
-    _inherit = 'account.tax'
-
-    tipo_impuesto = fields.Selection(
-        selection=[('1', 'IVA'), 
-                   ('2', 'Impuesto al consumo'),
-                   ('3', 'ICA'),
-                   ('4', 'Impuesto nacional al consumo'),],
-        string=_('Tipo de Impuesto'),
-    )

@@ -51,7 +51,7 @@
         <field name="name">numero</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.name</field>
+        <field name="campo_tecnico">self.number</field>
         <field name="detalle">Numero de la factura</field>
     </record>
     <record id="facturan0b6" model="base_electronicos.line">
@@ -107,7 +107,8 @@
         <field name="name">Codigo_de_estado_compania</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.company_id.partner_id.state_id.code</field>
+        <field name="campo_tecnico">self.company_id.partner_id.city_id.code</field>
+        <!-- self.company_id.partner_id.state_id.code -->
         <field name="detalle">Codigo de estado compania</field>
     </record>
     <record id="facturan0b13" model="base_electronicos.line">
@@ -163,7 +164,7 @@
         <field name="name">Prefijo_del_diario</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.journal_id.secure_sequence_id.prefix</field>
+        <field name="campo_tecnico">self.journal_id.sequence_id.prefix</field>
         <field name="detalle">Prefijo del diario</field>
     </record>
     <record id="facturan0b20" model="base_electronicos.line">
@@ -235,7 +236,7 @@
         <field name="name">codigo_estado_partner</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.partner_id.state_id.code</field>
+        <field name="campo_tecnico">self.partner_id.city_id.code</field>
         <field name="detalle">codigo estado partner</field>
     </record>
     <record id="facturan0b29" model="base_electronicos.line">
@@ -275,7 +276,7 @@
         <field name="name">dv_partner</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
-        <field name="campo_tecnico">self.partner_id.dv_plataforma</field>
+        <field name="campo_tecnico">self.partner_id.vat_vd</field>
         <field name="detalle">dv partner</field>
     </record>
     <record id="facturan0b34" model="base_electronicos.line">
@@ -330,7 +331,7 @@
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">fecha_cambio</field>
         <field name="categoria">factura</field>
-        <field name="obligatorio">true</field>
+        <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.currency_id.date</field>
         <field name="detalle">fecha cambio moneda</field>
     </record>
@@ -338,7 +339,7 @@
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">tasa_cambio</field>
         <field name="categoria">factura</field>
-        <field name="obligatorio">true</field>
+        <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.currency_id.rate</field>
         <field name="detalle">Valor de la tasa de cambio entre las divisas</field>
     </record>
@@ -355,7 +356,7 @@
         <field name="name">resolucion_Numero</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.journal_id.secure_sequence_id.dian_resolution_ids.resolution_number</field>
+        <field name="campo_tecnico">self.journal_id.sequence_id.dian_resolution_ids.resolution_number</field>
         <field name="detalle">resolucion Numero</field>
     </record>
     <record id="facturan0b44a1" model="base_electronicos.line">
@@ -363,7 +364,7 @@
         <field name="name">resolucion_Numero_desde</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.journal_id.secure_sequence_id.dian_resolution_ids.number_from</field>
+        <field name="campo_tecnico">self.journal_id.sequence_id.dian_resolution_ids.number_from</field>
         <field name="detalle">resolucion Numero desde</field>
     </record>
     <record id="facturan0b44a2" model="base_electronicos.line">
@@ -371,7 +372,7 @@
         <field name="name">resolucion_Numero_hasta</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.journal_id.secure_sequence_id.dian_resolution_ids.number_to</field>
+        <field name="campo_tecnico">self.journal_id.sequence_id.dian_resolution_ids.number_to</field>
         <field name="detalle">resolucion Numero hasta</field>
     </record>
     <record id="facturan0b45" model="base_electronicos.line">
@@ -379,7 +380,7 @@
         <field name="name">resolucion_fecha_desde</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.journal_id.secure_sequence_id.dian_resolution_ids.date_from</field>
+        <field name="campo_tecnico">self.journal_id.sequence_id.dian_resolution_ids.date_from</field>
         <field name="detalle">resolucion fecha desde</field>
     </record>
      <record id="facturan0b46" model="base_electronicos.line">
@@ -387,7 +388,7 @@
         <field name="name">resolucion_fecha_hasta</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.journal_id.secure_sequence_id.dian_resolution_ids.date_to</field>
+        <field name="campo_tecnico">self.journal_id.sequence_id.dian_resolution_ids.date_to</field>
         <field name="detalle">resolucion fecha hasta</field>
     </record>
      <record id="facturan0b47" model="base_electronicos.line">
@@ -438,14 +439,14 @@
         <field name="campo_tecnico">self.nombre_not</field>
         <field name="detalle">Huesped</field>
     </record>
-    <record id="facturan0b53" model="base_electronicos.line">
+    <!-- <record id="facturan0b53" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">comentarios</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.narration</field>
         <field name="detalle">comentarios</field>
-    </record>
+    </record> -->
     <record id="facturan0b54" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">Numero_referecia_factura</field>
@@ -523,7 +524,7 @@
         <field name="name">Ambiente</field>
         <field name="categoria"></field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">"2"</field>
+        <field name="campo_tecnico">"1"</field>
         <field name="detalle">indica en cual ambiente estas</field>
     </record>
     <record id="facturan0b63" model="base_electronicos.line">
@@ -550,14 +551,105 @@
         <field name="campo_tecnico">"R-99-PN"</field>
         <field name="detalle">el codigo calidad del partner</field>
     </record>
-    <!-- <record id="facturan0b66" model="base_electronicos.line">
+
+      <record id="facturan0b66" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
-        <field name="name">documento</field>
+        <field name="name">factura_nc</field>
         <field name="categoria">factura</field>
-        <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.company_id.partner_id.id_plataforma</field>
-        <field name="detalle">El tipo de documento a generar</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura</field>
+        <field name="detalle">la factura de la nota credito</field>
+    </record>
+
+    <record id="facturan0b67" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">factura_nc</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura.name</field>
+        <field name="detalle">la factura de la nota credito</field>
+    </record>
+    <record id="facturan0b68" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">fecha_factura_nc</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura.date</field>
+        <field name="detalle">fecha factura de la nota credito</field>
+    </record>
+    <record id="facturan0b69" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">cufe_factura_nc</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura.cufe</field>
+        <field name="detalle">cufe factura de la nota credito</field>
+    </record>
+
+    <!-- <record id="facturan0b70" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">code_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.code_refund</field>
+        <field name="detalle">codigo refund nota credito</field>
     </record> -->
 
+    <record id="facturan0b71" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">cufe_factura_nc</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.factura.cufe</field>
+        <field name="detalle">cufe factura de la nota credito</field>
+    </record>
+
+    <!-- <record id="facturan0b72" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">code_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.code_refund</field>
+        <field name="detalle">codigo refund nota credito</field>
+        
+    </record> -->
+
+    <record id="facturan0b73" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">nota_debito</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.nota_debito</field>
+        <field name="detalle">Tipo de nota debito</field>
+        
+    </record>
+
+
+    <!-- <record id="facturan0b74" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">ini_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.number_refund_to</field>
+        <field name="detalle">Inicio numeracion refund</field>
+    </record>
+
+    <record id="facturan0b75" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">fin_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.number_refund_from</field>
+        <field name="detalle">Fin numeracion refund</field>
+    </record> -->
+
+<record id="facturan0b76" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">codigo_zip_partner</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.partner_id.zip</field>
+        <field name="detalle">Fin numeracion refund</field>
+    </record>
 
 </odoo>
