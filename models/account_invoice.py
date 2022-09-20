@@ -25,6 +25,7 @@ class AccountMove(models.Model):
                    ('32', '32 Nota Débito sin referencia a facturas'),],
         string=_('Tipo de Nota debito'),
     )
+    show_comment = fields.Char("Mostrar comentario")
     nota_credito = fields.Selection(
         selection=[('1', '1 Devolución de parte de los bienes; no aceptación de partes del servicio'), 
                    ('2', '2 Anulación de factura electrónica'), 
