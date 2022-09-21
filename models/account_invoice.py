@@ -302,7 +302,7 @@ class AccountMove(models.Model):
     def copy(self, default=None):
         default = dict(default or {})
         #if self.estado_factura == 'factura_correcta' or self.estado_factura == 'factura_cancelada':
-        default['estado_factura'] = 'factura_no_generada'
+        default['estado_factura'] = 'no_generada'
         #default['folio_fiscal'] = ''
         default['fecha_factura'] = None
         default['cufe'] = False
