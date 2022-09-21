@@ -301,12 +301,12 @@ class AccountMove(models.Model):
     @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
         default = dict(default or {})
-        if self.estado_factura == 'factura_correcta' or self.estado_factura == 'factura_cancelada':
-            default['estado_factura'] = 'factura_no_generada'
-            #default['folio_fiscal'] = ''
-            default['fecha_factura'] = None
-            default['factura_cfdi'] = False
-        return super(AccountInvoice, self).copy(default=default)
+        #if self.estado_factura == 'factura_correcta' or self.estado_factura == 'factura_cancelada':
+        default['estado_factura'] = 'factura_no_generada'
+        #default['folio_fiscal'] = ''
+        default['fecha_factura'] = None
+        default['cufe'] = False
+        return super(AccountMove, self).copy(default=default)
     
     #@api.one
     @api.depends('number')
