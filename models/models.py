@@ -32,6 +32,16 @@ class datos_generales(models.Model):
     password = fields.Char('password')
     general_factura = fields.Many2one('base_electronicos.tabla', string='Asignar a',ondelete='restrict', index=True)
 
+    def documento(self):
+        valores = self.env['account.invoice'].search([('journal_id.id', '=', self.diario.id)])
+        response2={}
+        # print(self.journal_id[0])
+        for docu in valores: 
+            #documento = valores.general_factura.search([('diario', '=', docu.journal_id[0].id)])
+            # print(documento)
+            # if documento:
+            docu.tipo_documento = self.tipo_factura
+            
 class base_electronicos(models.Model):
     _name = 'base_electronicos.tabla'
     _inherit = 'base_electronicos.tabla'

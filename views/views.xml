@@ -302,6 +302,9 @@
                     <field name="company_id" />
                     <field name="diario" />
                     <field name="tipo_factura" />
+                    <button name="documento" type="object" string="Cambiar el tipo a documentos" 
+                			 groups="base.group_user"/>
+                    </group>
                     </group>
                 </form>
              </field>   
