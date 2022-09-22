@@ -11,7 +11,7 @@
         <field name="name">nit_compania</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.company_id.partner_id.vat_ref</field>
+        <field name="campo_tecnico">self.company_id.partner_id.vat</field>
         <field name="detalle">nit compania</field>
     </record>
     <record id="facturan0b2" model="base_electronicos.line">
@@ -43,7 +43,7 @@
         <field name="name">nit_cliente</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.partner_id.vat_ref</field>
+        <field name="campo_tecnico">self.partner_id.vat</field>
         <field name="detalle">nit cliente</field>
     </record>
     <record id="facturan0b5" model="base_electronicos.line">
@@ -195,7 +195,7 @@
         <field name="name">documento_del_partner</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>
-        <field name="campo_tecnico">self.partner_id.vat_ref</field>
+        <field name="campo_tecnico">self.partner_id.vat</field>
         <field name="detalle">documento del partner</field>
     </record>
     <record id="facturan0b24" model="base_electronicos.line">
