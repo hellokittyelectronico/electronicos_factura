@@ -24,11 +24,8 @@ class datos_generales(models.Model):
     diario = fields.Many2one('account.journal', string='Diario',ondelete='restrict')
     tipo_factura = fields.Selection(
         selection=[('factura', _('Factura')),
-                   ('extranjero', _('Extranjero')),
-				   ('nota_credito_factura', _('Nota Credito Factura')),
                    ('nota_debito_factura', _('Nota Debito Factura')),
-                   ('documento_soporte', _('Documento Soporte')),
-                   ('Nota_credito_Documento_soporte', _('Nota Credito Documento Soporte')),],
+                   ('documento_soporte', _('Documento Soporte')),],
         string=_('Tipo de documento'), 
         default='factura'
     )
@@ -114,7 +111,7 @@ class partner_fact(models.Model):
                    ('5', _('5- Generica')),
                    ('6', _('6- Generica con pago anticipado')),
                    ('7', _('7- Generica con periodo de facturacion')),
-                   ('8', _('8- Consorcio')),
+                   ('8', _('8- Con    sorcio')),
                    ('9', _('9- Servicios AIU')),
                    ('10', _('10- Estandar')),],
         string=_('Tipo de factura'),

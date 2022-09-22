@@ -22,10 +22,8 @@ class AccountMove(models.Model):
     grafica_link = fields.Char('pdf')
     factura_electronica = fields.Boolean('Factura Electronica')
     nota_debito = fields.Selection(
-        selection=[('1', '1 Intereses'), 
-                   ('2', '2 Gastos por cobrar'), 
-                   ('3', '3 Cambio del valor'),
-                   ('4', '4 Otro'),],
+        selection=[('30', '30 Nota Débito que referencia una factura electrónica.'), 
+                   ('32', '32 Nota Débito sin referencia a facturas'),],
         string=_('Tipo de Nota debito'),
     )
     nota_credito = fields.Selection(
@@ -37,7 +35,7 @@ class AccountMove(models.Model):
                    ('6', '6 Otros'), ],
         string=_('Tipo de Nota credito'),
     )
-    factura = fields.Many2one('account.move', domain="[('estado_factura', 'in', ('factura_correcta','a'))]")#,relation='partner_delivery_partner_rel',column1="id", column2="id2"
+    
     tipoc_o_d = fields.Char('tipo')
     tipo_comprobante = fields.Selection(
         selection=[('I', 'Ingreso'), 
@@ -102,14 +100,20 @@ class AccountMove(models.Model):
         default ='10'
     )
     xml_invoice_link = fields.Char(string=_('XML Invoice Link'))
-    estado_factura = fields.Selection(
-        selection=[('factura_no_generada', 'Factura no generada'), ('factura_correcta', 'Factura correcta'), 
-                   ('problemas_factura', 'Problemas con la factura'), ('solicitud_cancelar', 'Cancelación en proceso'),
-                   ('cancelar_rechazo', 'Cancelación rechazada'), ('factura_cancelada', 'Factura cancelada'), ],
-        string=_('Estado de factura'),
-        default='factura_no_generada',
-        readonly=False
-    )
+    # estado_factura = fields.Selection(
+    #     selection=[('factura_no_generada', 'Factura no generada'), ('factura_correcta', 'Factura correcta'), 
+    #                ('problemas_factura', 'Problemas con la factura'), ('solicitud_cancelar', 'Cancelación en proceso'),
+    #                ('cancelar_rechazo', 'Cancelación rechazada'), ('factura_cancelada', 'Factura cancelada'), ],
+    #     string=_('Estado de factura'),
+    #     default='factura_no_generada',
+    #     readonly=False
+    # )
+    estado_factura = fields.Selection([
+        ('no_generada', 'No_generada'),
+        ('Generada_correctamente', 'Generada_correctamente'),
+        ('Generada_con_errores', 'Generada_con_errores'),
+    ], string='Estado',default="no_generada")
+    factura = fields.Many2one('account.move', domain="[('estado_factura', 'in', ('Generada_correctamente','a'))]")#,relation='partner_delivery_partner_rel',column1="id", column2="id2"
     pdf_cdfi_invoice = fields.Binary("CDFI Invoice")
     qrcode_image = fields.Binary("QRCode")
     regimen_fiscal = fields.Selection(
@@ -123,11 +127,7 @@ class AccountMove(models.Model):
     nombre_not = fields.Char(string=_('Nombre nota'))
     checkin = fields.Char(string=_('Checkin'))
     checkout = fields.Char(string=_('Checkout'))
-    estado_factura = fields.Selection([
-        ('no_generada', 'No_generada'),
-        ('Generada_correctamente', 'Generada_correctamente'),
-        ('Generada_con_errores', 'Generada_con_errores'),
-    ], string='Estado',default="no_generada")
+    
     impreso = fields.Boolean("Impreso?")
     # FechaGen = fields.Char('Fecha Generacion')
     # HoraGen = fields.Char('Hora Generacion')
@@ -142,10 +142,8 @@ class AccountMove(models.Model):
     
     sub_tipo_documento = fields.Selection([
         ('Factura_Electronica', 'Factura Electronica'),
-        ('Nota_debito', 'Nota_debito'),
-        ('Nota_credito', 'Nota_credito'),
+        ('nota_debito_factura', 'Nota_debito_factura'),
         ('Documento_soporte', 'Documento_soporte'),
-        ('Nota_credito_Documento_soporte', 'Nota_credito_Documento_soporte'),
     ], string='Tipo documento')
 
     calidades_atributos = fields.Many2many("account.calidadess")
@@ -230,13 +228,23 @@ class AccountMove(models.Model):
         valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
         response2={}
         valores_lineas = valores.mp_id
+        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id)])
         print("haber")
         print(self.journal_id)
-        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id)])
-        print(documento)
+        print(documento.tipo_factura)
         if documento:
-            self.tipo_documento = documento.tipo_factura
-            
+            if self.move_type == "out_invoice" and documento.tipo_factura == "factura":
+                self.tipo_documento = documento.tipo_factura
+            elif self.move_type == "out_refund" and documento.tipo_factura == "factura":
+                self.tipo_documento = "Nota Credito"
+            elif self.move_type == "in_invoice" and documento.tipo_factura == "documento_soporte":
+                self.tipo_documento = documento.tipo_factura
+            elif self.move_type == "in_refund" and documento.tipo_factura == "documento_soporte":
+                self.tipo_documento = "Nota Credito Doc soporte"
+            elif self.move_type == "out_invoice" and documento.tipo_factura == "nota_debito_factura":
+                self.tipo_documento = documento.tipo_factura
+                
+                
         # datos_generales = self.env['electronicos_factura.datos_generales'].search([('diario', '=', self.journal_id[0].id)])
         # if datos_generales: 
         #     self.tipo_documento = "soporte"
@@ -293,12 +301,12 @@ class AccountMove(models.Model):
     @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
         default = dict(default or {})
-        if self.estado_factura == 'factura_correcta' or self.estado_factura == 'factura_cancelada':
-            default['estado_factura'] = 'factura_no_generada'
-            #default['folio_fiscal'] = ''
-            default['fecha_factura'] = None
-            default['factura_cfdi'] = False
-        return super(AccountInvoice, self).copy(default=default)
+        #if self.estado_factura == 'factura_correcta' or self.estado_factura == 'factura_cancelada':
+        default['estado_factura'] = 'no_generada'
+        #default['folio_fiscal'] = ''
+        default['fecha_factura'] = None
+        default['cufe'] = False
+        return super(AccountMove, self).copy(default=default)
     
     #@api.one
     @api.depends('number')
@@ -374,10 +382,11 @@ class AccountMove(models.Model):
             invoice.message_post(body="CFDI emitido")
         return True
     
-    def veybuscalineas(self):
+    def veybuscalineas(self,tipo_documento):
         num = 0
         invoice_lines = []
         tax_grouped = {}
+        rete_grouped = {}
         valorimpuestos = 0
         t_amount_wo_tax = 0
         for line in self.invoice_line_ids:
@@ -419,8 +428,30 @@ class AccountMove(models.Model):
                     else:
                         tax_grouped[key]['amount'] += val['amount']
                         tax_grouped[key]['base'] += this_amount
+                # for rete in self.line_ids:
+                if tax_id.rte_iva or tax_id.rte_fuente or tax_id.rte_ica:
+                    key = tax['id']
+                    val2 = {'rte_fuente': tax_id.rte_fuente,
+                    'rte_iva': tax_id.rte_iva,
+                    'rte_ica': tax_id.rte_ica,
+                    'name': tax_id.name, #tax_group_id.
+                    'tax_id': tax['id'],
+                    'porcentaje': "{:.4f}".format(tax_id.amount*-1) if tipo_documento == "factura" else "{:.2f}".format(tax_id.amount*-1),
+                    'valor_base': this_amount,
+                    'amount': tax['amount'],
+                    'valor_retenido': tax['amount']*-1,}
+                    if key not in rete_grouped:
+                        rete_grouped[key] = val2
+                    else:
+                        rete_grouped[key]['valor_base'] += this_amount
+                        rete_grouped[key]['valor_retenido'] += tax['amount']*-1
+                    rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
+                    'porcentaje': "{:.4f}".format(tax_id.amount*-1),
+                    'valor_base': this_amount,
+                    'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
             valorimpuestos += valorimpuesto 
-            t_amount_wo_tax += this_amount
+            # t_amount_wo_tax += this_amount
+
             invoice_lines.append({'numero_linea':num,
                                 'codigo':line.product_id.default_code,
                                 'cantidad': line.quantity,
@@ -430,14 +461,11 @@ class AccountMove(models.Model):
                                 'descuento':line.discount,
                                 'descripcion': line.name[:1000],
                                 'taxes': tax_items,
-                                'rete_items':rete_items})
-        for rete in self.line_ids:
-            if rete.tax_line_id.rte_iva or rete.tax_line_id.rte_fuente or rete.tax_line_id.rte_ica:
-                rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
-                'porcentaje': "{:.2f}".format(tax_id.amount*-1),
-                'valor_base': t_amount_wo_tax,
-                'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
-        return invoice_lines,valorimpuestos,tax_grouped,rete_items
+                                'rete_items':rete_items,
+                                'periodo_fecha':line.periodo_fecha,
+                                'periodo_codigo':line.periodo_codigo})
+        
+        return invoice_lines,valorimpuestos,tax_grouped,rete_grouped
 
     def to_json(self):
         totalDays =100
@@ -451,7 +479,7 @@ class AccountMove(models.Model):
         documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
         print(documento)
         if documento:
-            send = {'tipo_documento':documento.tipo_factura}
+            send = {'tipo_documento':self.tipo_documento}
         else:
             return self.env['wk.wizard.message'].genrated_message("El diario no esta configurado en la tabla de envio "," Error en la configuracion","https://navegasoft.com") ,True
         for linea in valores_lineas:
@@ -471,7 +499,7 @@ class AccountMove(models.Model):
                         print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
-                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas()
+                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas(self.tipo_documento) #
                     elif linea.campo_tecnico.strip() == "totales":
                         send["valorsinimpuestos"] =self.amount_untaxed
                     elif linea.campo_tecnico.strip() == "valor_impuestos":
@@ -510,6 +538,47 @@ class AccountMove(models.Model):
         # print(send)
         #send['credit_note']= self.credit_note
 
+    def pedircufe(self,send,urlini):
+        headers = {'content-type': 'application/json'}
+        print("PIDENDO CUFE 99999999999999999")
+        # print(send)
+        resultado = requests.post(urlini,headers=headers,data = json.dumps(send, indent=4, sort_keys=True, default=str))
+        print(resultado.text)
+
+        if resultado.status_code == 200:
+            resultado2 = json.loads(resultado.text)
+            print(resultado2["result"])
+            if "result" in resultado2:
+                final_text = json.loads(json.dumps(resultado2))
+                result = final_text["result"]
+                print("final_error")
+                print(final_text)
+                print("result")
+                print(result)
+                return result
+        #         if "error_d" in final:
+        #             if "transactionID" in final:
+        #                 print("final")
+        #                 print(resultado)
+        #                 final_text = json.loads(json.dumps(final))#eval()
+        #                 self.write({"impreso":False,"transaccionID":final_text['transactionID'],"estado_factura":"Generada_correctamente"})
+        #             return self.env['wk.wizard.message'].genrated_message(final_text['mensaje'],final_text['titulo'] ,final_text['link'])
+        #         else:
+        #             final_text = json.loads(json.dumps(final))#.encode().decode("utf-8") eval(
+        #             #final_text = final_error['error']
+        #             return self.env['wk.wizard.message'].genrated_message("2 "+final_text['error'], final_text['titulo'],final_text['link'])
+        #         # else:
+        #         #     return self.env['wk.wizard.message'].genrated_message('3 No hemos recibido una respuesta satisfactoria vuelve a enviarlo', 'Reenviar')    
+        #     else:
+        #         if "error" in resultado:
+        #             final = resultado["error"]
+        #             final_error = json.loads(json.dumps(final))
+        #             data = final_error["data"]
+        #             data_final = data['message']
+        #             return self.env['wk.wizard.message'].genrated_message("1 "+data_final,"Los datos no estan correctos" ,"https://navegasoft.com")
+        # else:
+        #     raise Warning(result)
+
     #@api.multi
     def envio_directo(self):
         import time
@@ -524,6 +593,22 @@ class AccountMove(models.Model):
             # self.FechaGen = str(now2.date())
             # self.HoraGen = str(current_time)
             urlini = "https://odoo15.navegasoft.com/admonclientes/objects/"
+            if not self.factura.cufe and (self.tipo_documento == "Nota Credito" or self.tipo_documento == "Nota Credito Doc soporte"):
+                if not self.factura:
+                    raise UserError("Recuerda que debes asociar una factura y un tipo.")
+                else:
+                    long_total = len(self.factura.name)
+                    prefijo = self.factura.journal_id.code
+                    print(prefijo)
+                    lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
+                    #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
+                    folio = self.factura.name[lon_prefix:long_total] 
+                    send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":self.tipo_documento}
+                    cufe = self.pedircufe(send,urlini)
+                    print(cufe)
+                    self.factura.write({"cufe":cufe['cufe']})
+                    # return
+                    #self.write({"cufe":})
             send,error = invoice.to_json()
             if error:
                 return send
@@ -573,8 +658,8 @@ class AccountMove(models.Model):
             #lista = re.findall("\d+", self.number)
             #number = lista[0]
             if self.move_type == 'out_refund':
-                lon_prefix = len(self.journal_id.refund_secure_sequence_id.prefix) 
-                prefi = self.journal_id.refund_secure_sequence_id.prefix #self.number[0:long_total-len(number)]
+                lon_prefix = len(self.journal_id.code_refund)#refund_secure_sequence_id.prefix 
+                prefi = self.journal_id.code_refund #self.number[0:long_total-len(number)]
             else:
                 lon_prefix = len(self.journal_id.secure_sequence_id.prefix) 
                 prefi = self.journal_id.secure_sequence_id.prefix #self.number[0:long_total-len(number)]
@@ -584,7 +669,7 @@ class AccountMove(models.Model):
         headers = {'content-type': 'application/json'}
         send = {"id_plataforma":self.company_id.partner_id.id_plataforma,'password': self.company_id.partner_id.password,
         "transaccionID":self.transaccionID,"prefix":prefi,
-        "number":number,'documento_electronico':"factura"}#"ambiente":self.ambiente,
+        "number":number,'documento_electronico':"factura",'tipo_documento':self.tipo_documento}#"ambiente":self.ambiente,
         result = requests.post(urlini,headers=headers,data = json.dumps(send))
         #resultado = json.loads(result.text)
         #print(result.text)
@@ -607,55 +692,73 @@ class AccountMove(models.Model):
                     final2 = final['result']
                     final_data = json.loads(json.dumps(final2)) #eval(final2)
                     #archivo = final_data['code']
-                    module_path = modules.get_module_path('tabla_nomina')        
-                    model = "facturas"
-                    if '\\' in module_path:
-                        src_path = '\\static\\'
-                        src_model_path = "{0}{1}\\".format('\\static', model)
-                    else:
-                        src_path = '/static/'
-                        src_model_path = "{0}{1}/".format('/static/', model)
+                    # module_path = modules.get_module_path('electronicos_factura')        
+                    # model = "facturas"
+                    # if '\\' in module_path:
+                    #     src_path = '\\static\\'
+                    #     src_model_path = "{0}{1}\\".format('\\static', model)
+                    # else:
+                    #     src_path = '/static/'
+                    #     src_model_path = "{0}{1}/".format('/static/', model)
                     
-                    # if "model" folder does not exists create it
-                    os.chdir("{0}{1}".format(module_path, src_path))
-                    if not os.path.exists(model):
-                        os.makedirs(model)
-                    extension = ".pdf"
-                    #file_path = "{0}{1}".format(module_path + src_model_path + str(name), extension)
-                    file_path = "{0}{1}".format(module_path + src_model_path + str(self.name), extension)
-                    if not (os.path.exists(file_path)):
-                        size =1
-                        if size == 0:
-                            os.remove(file_path)
-                            raise UserError(_('imprimible se esta preparando intenta de nuevo, Factura preparandose.'))
-                        else:
-                            import base64 
-                            print(final_data)
-                            if final_data['code'] == '400':
-                                return self.env['wk.wizard.message'].genrated_message('Estamos recibiendo un codigo 400 Es necesario esperar para volver imprimir el documento', 'Es necesario esperar para volver a imprimir el documento')
-                            elif final_data['code'] == '201':
-                                print("el codigo")
-                                print(final_data['code'])
-                                image_64_encode = base64.b64decode(final_data['documentBase64']) #eval(
-                                i64 = base64.b64encode(image_64_encode)
-                                print("self.name+extension")
-                                print(self.name+extension)
-                                att_id = self.env['ir.attachment'].create({
-                                    'name': self.name+extension,
-                                    'type': 'binary',
-                                    'datas': i64,
-                                    #'datas_fname': self.name+extension,
-                                    'res_model': 'account.move',
-                                    'res_id': self.id,
-                                    })
-                                if att_id:
-                                    self.write({"impreso":True})
-                                    return self.env['wk.wizard.message'].genrated_message("Ve a attachment","Factura impresa" ,"https://navegasoft.com")
-                            else:
-                                return self.env['wk.wizard.message'].genrated_message('Estamos recibiendo un codigo de error Es necesario esperar para volver imprimir el documento', 'Es necesario esperar para volver a imprimir el documento')
-                                
+                    # # if "model" folder does not exists create it
+                    # os.chdir("{0}{1}".format(module_path, src_path))
+                    # if not os.path.exists(model):
+                    #     os.makedirs(model)
+                    # extension = ".pdf"
+                    # #file_path = "{0}{1}".format(module_path + src_model_path + str(name), extension)
+                    # file_path = "{0}{1}".format(module_path + src_model_path + str(self.name), extension)
+                    # if not (os.path.exists(file_path)):
+                    #     size =1
+                    #     if size == 0:
+                    #         os.remove(file_path)
+                    #         raise UserError(_('imprimible se esta preparando intenta de nuevo, Factura preparandose.'))
+                    #     else:
+                    import base64 
+                    print(final_data)
+                    if final_data['code'] == '400':
+                        return self.env['wk.wizard.message'].genrated_message('Estamos recibiendo un codigo 400 Es necesario esperar para volver imprimir el documento', 'Es necesario esperar para volver a imprimir el documento')
+                    elif final_data['code'] == '200':
+                        print("el codigo")
+                        print(final_data['code'])
+                        image_64_encode = base64.b64decode(final_data['documentBase64']) #eval(
+                        i64 = base64.b64encode(image_64_encode)
+                        print("self.name+extension")
+                        print(self.name+extension)
+                        att_id = self.env['ir.attachment'].create({
+                            'name': self.name+extension,
+                            'type': 'binary',
+                            'datas': i64,
+                            #'datas_fname': self.name+extension,
+                            'res_model': 'account.move',
+                            'res_id': self.id,
+                            })
+                        if att_id:
+                            self.write({"impreso":True})
+                            return self.env['wk.wizard.message'].genrated_message("Ve a attachment","Factura impresa" ,"https://navegasoft.com")
+                    elif final_data['code'] == '201':
+                        print("el codigo")
+                        print(final_data['code'])
+                        image_64_encode = base64.b64decode(final_data['documentBase64']) #eval(
+                        i64 = base64.b64encode(image_64_encode)
+                        print("self.name+extension")
+                        print(self.name+extension)
+                        att_id = self.env['ir.attachment'].create({
+                            'name': self.name+extension,
+                            'type': 'binary',
+                            'datas': i64,
+                            #'datas_fname': self.name+extension,
+                            'res_model': 'account.move',
+                            'res_id': self.id,
+                            })
+                        if att_id:
+                            self.write({"impreso":True})
+                            return self.env['wk.wizard.message'].genrated_message("Ve a attachment","Factura impresa" ,"https://navegasoft.com")
                     else:
-                        raise UserError(_('Ve a attachment, Factura ya impresa.'))
+                        return self.env['wk.wizard.message'].genrated_message('Estamos recibiendo un codigo de error Es necesario esperar para volver imprimir el documento', 'Es necesario esperar para volver a imprimir el documento')
+                                
+                    # else:
+                    #     raise UserError(_('Ve a attachment, Factura ya impresa.'))
  
                     final = resultado["error"]
                     final_error = json.loads(json.dumps(final))
@@ -684,6 +787,9 @@ class taxdemedida(models.Model):
     #_name = 'account.tax'
     _inherit = 'account.tax'
 
+    rte_fuente = fields.Boolean('Retencion de Fuente')
+    rte_iva = fields.Boolean('Retencion de IVA')
+    rte_ica = fields.Boolean('Retencion de ICA')
     tipo_impuesto = fields.Selection(
         selection=[('1', 'IVA'), 
                    ('2', 'Impuesto al consumo'),
@@ -691,3 +797,71 @@ class taxdemedida(models.Model):
                    ('4', 'Impuesto nacional al consumo'),],
         string=_('Tipo de Impuesto'),
     )
+
+ 
+
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    periodo_fecha = fields.Date("Fecha periodo", required=True, default=fields.Date.context_today)
+    periodo_codigo = fields.Selection(selection=[('1', 'Por operación'),('2', 'Acumulado Semanal'),],string=_('Periodo'), required=True,default='1')
+
+
+
+# class AccountMoveLine(models.Model):
+#     _inherit = 'account.move.line.periodo'
+
+#     periodo_fecha = fields.Date("Fecha periodo", required=True, default=fields.Date.context_today)
+#     periodo_codigo = fields.Selection(selection=[('operacion', 'Por operación'),('acumulado', 'Acumulado Semanal'),],string=_('Periodo'), required=True,default='operacion')
+
+
+class Accountrefund(models.TransientModel):
+    _inherit = 'account.move.reversal'
+  
+    nota_credito = fields.Selection(
+        selection=[('1', '1 Devolución de parte de los bienes; no aceptación de partes del servicio'), 
+                   ('2', '2 Anulación de factura electrónica'), 
+                   ('3', '3 Rebaja total aplicada'),
+                   ('4', '4 Descuento total aplicado'), 
+                   ('5', '5 Rescisión: nulidad por falta de requisitos'), 
+                   ('6', '6 Otros'), ],
+        string=_('Tipo de Nota credito'),
+    )
+
+    # VERSION 14
+    # def _prepare_default_reversal(self, move):
+    #     reverse_date = self.date if self.date_mode == 'custom' else move.date
+    #     return {
+    #         'ref': _('Reversal of: %(move_name)s, %(reason)s', move_name=move.name, reason=self.reason) 
+    #                if self.reason
+    #                else _('Reversal of: %s', move.name),
+    #         'date': reverse_date,
+    #         'invoice_date': move.is_invoice(include_receipts=True) and (self.date or move.date) or False,
+    #         'journal_id': self.journal_id and self.journal_id.id or move.journal_id.id,
+    #         'invoice_payment_term_id': None,
+    #         'invoice_user_id': move.invoice_user_id.id,
+    #         'auto_post': True if reverse_date > fields.Date.context_today(self) else False,
+    #         'nota_credito':self.nota_credito,
+    #         'factura':move.id,
+    #         'estado_factura':'no_generada',
+    #     }
+
+
+    # VERSION 15
+    def _prepare_default_reversal(self, move):
+        reverse_date = self.date if self.date_mode == 'custom' else move.date
+        return {
+            'ref': _('Reversal of: %(move_name)s, %(reason)s', move_name=move.name, reason=self.reason) 
+                   if self.reason
+                   else _('Reversal of: %s', move.name),
+            'date': reverse_date,
+            'invoice_date': move.is_invoice(include_receipts=True) and (self.date or move.date) or False,
+            'journal_id': self.journal_id.id,
+            'invoice_payment_term_id': None,
+            'invoice_user_id': move.invoice_user_id.id,
+            'auto_post': True if reverse_date > fields.Date.context_today(self) else False,
+            'nota_credito':self.nota_credito,
+            'factura':move.id,
+            'estado_factura':'no_generada',
+        }
+
