@@ -228,21 +228,25 @@ class AccountMove(models.Model):
         valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
         response2={}
         valores_lineas = valores.mp_id
-        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id)])
+        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id),('company_id','=',self.company_id.id)])
         print("haber")
         print(self.journal_id)
         print(documento.tipo_factura)
+        print("self.move_type")
+        print(self)
+        print(self[0].move_type)
+        print(self[1].move_type)
         if documento:
-            if self.move_type == "out_invoice" and documento.tipo_factura == "factura":
-                self.tipo_documento = documento.tipo_factura
-            elif self.move_type == "out_refund" and documento.tipo_factura == "factura":
-                self.tipo_documento = "Nota Credito"
-            elif self.move_type == "in_invoice" and documento.tipo_factura == "documento_soporte":
-                self.tipo_documento = documento.tipo_factura
-            elif self.move_type == "in_refund" and documento.tipo_factura == "documento_soporte":
-                self.tipo_documento = "Nota Credito Doc soporte"
-            elif self.move_type == "out_invoice" and documento.tipo_factura == "nota_debito_factura":
-                self.tipo_documento = documento.tipo_factura
+            if self[0].move_type == "out_invoice" and documento.tipo_factura == "factura":
+                self[0].tipo_documento = documento.tipo_factura
+            elif self[0].move_type == "out_refund" and documento.tipo_factura == "factura":
+                self[0].tipo_documento = "Nota Credito"
+            elif self[0].move_type == "in_invoice" and documento.tipo_factura == "documento_soporte":
+                self[0].tipo_documento = documento.tipo_factura
+            elif self[0].move_type == "in_refund" and documento.tipo_factura == "documento_soporte":
+                self[0].tipo_documento = "Nota Credito Doc soporte"
+            elif self[0].move_type == "out_invoice" and documento.tipo_factura == "nota_debito_factura":
+                self[0].tipo_documento = documento.tipo_factura
                 
                 
         # datos_generales = self.env['electronicos_factura.datos_generales'].search([('diario', '=', self.journal_id[0].id)])
