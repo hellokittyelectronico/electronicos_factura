@@ -235,7 +235,7 @@ class AccountMove(models.Model):
         print("self.move_type")
         print(self)
         print(self[0].move_type)
-        print(self[1].move_type)
+        # print(self[1].move_type)
         if documento:
             if self[0].move_type == "out_invoice" and documento.tipo_factura == "factura":
                 self[0].tipo_documento = documento.tipo_factura
