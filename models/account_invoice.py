@@ -483,7 +483,11 @@ class AccountMove(models.Model):
         documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
         print(documento)
         if documento:
-            send = {'tipo_documento':self.tipo_documento}
+            print()
+            if self.tipo_factura==4:
+                send = {'tipo_documento':'extranjero'}
+            else:
+                send = {'tipo_documento':self.tipo_documento}
         else:
             return self.env['wk.wizard.message'].genrated_message("El diario no esta configurado en la tabla de envio "," Error en la configuracion","https://navegasoft.com") ,True
         for linea in valores_lineas:
