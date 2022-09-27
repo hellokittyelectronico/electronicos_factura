@@ -484,7 +484,7 @@ class AccountMove(models.Model):
         print(documento)
         if documento:
             print()
-            if self.tipo_factura==4:
+            if self.tipo_factura=='4':
                 send = {'tipo_documento':'extranjero'}
             else:
                 send = {'tipo_documento':self.tipo_documento}
