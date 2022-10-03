@@ -423,6 +423,7 @@ class AccountMove(models.Model):
                     'name': tax_id.name, #tax_group_id.
                     'tax_id': tax['id'],
                     'codigo': int(tax_id.tipo_impuesto),
+                    'incluido': tax['price_include'],
                     'porcentaje': "{:.2f}".format(tax_id.amount),
                     'base': this_amount,
                     'amount': tax['amount']}
