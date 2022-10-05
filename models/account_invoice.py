@@ -490,6 +490,7 @@ class AccountMove(models.Model):
             else:
                 send = {'tipo_documento':self.tipo_documento}
         else:
+            self.write({'rechazo':"El diario no esta configurado en la tabla de envio"})
             return self.env['wk.wizard.message'].genrated_message("El diario no esta configurado en la tabla de envio "," Error en la configuracion","https://navegasoft.com") ,True
         for linea in valores_lineas:
             #buscar en el comprobante el codigo
@@ -501,6 +502,7 @@ class AccountMove(models.Model):
                         if self.partner_id.state_id.code:
                             send[linea.name] = eval(linea.campo_tecnico)
                         else:
+                            self.write({'rechazo':"El campo esta en blanco "+linea.campo_tecnico+ " " +linea.name})
                             return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                     elif linea.name.strip() == "fecha":
                         print("imprimiendo fecha")
@@ -519,6 +521,7 @@ class AccountMove(models.Model):
                         try:
                             safe_eval(linea.campo_tecnico, {'self': self}) #mode='exec',nocopy=True,
                         except Exception as e:
+                            self.write({'rechazo':"El campo tecnico NO EXISTE "+linea.campo_tecnico+ " " +linea.name})
                             return self.env['wk.wizard.message'].genrated_message("El campo tecnico NO EXISTE "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                         
                         if eval(linea.campo_tecnico):
@@ -526,11 +529,13 @@ class AccountMove(models.Model):
                         else:
                             if linea.obligatorio:
                                 print("no tiene campo tecnico")
+                                self.write({'rechazo':"El campo tecnico esta en blanco "+linea.campo_tecnico+ " " +linea.name})
                                 return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                 # else:
                 #     print("no congigurado")
                 #     return self.env['wk.wizard.message'].genrated_message("El campo no esta configurado"+linea.campo_tecnico,"Error en el campo"+linea.name,"https://navegasoft.com")    
             except SyntaxError:
+                self.write({'rechazo':"El campo tecnico no existe "+linea.campo_tecnico+ " " +linea.name})
                 return self.env['wk.wizard.message'].genrated_message("El campo tecnico no existe "+linea.campo_tecnico,"Error en el campo"+linea.name,"https://navegasoft.com"),True
         if "id_plataforma" not in send:
             send['id_plataforma'] =self.company_id.partner_id.id_plataforma
@@ -641,6 +646,7 @@ class AccountMove(models.Model):
                         else:
                             final_text = json.loads(json.dumps(final))#.encode().decode("utf-8") eval(
                             #final_text = final_error['error']
+                            self.write({'rechazo':"2 "+final_text['error']})
                             return self.env['wk.wizard.message'].genrated_message("2 "+final_text['error'], final_text['titulo'],final_text['link'])
                         # else:
                         #     return self.env['wk.wizard.message'].genrated_message('3 No hemos recibido una respuesta satisfactoria vuelve a enviarlo', 'Reenviar')    
@@ -650,6 +656,7 @@ class AccountMove(models.Model):
                             final_error = json.loads(json.dumps(final))
                             data = final_error["data"]
                             data_final = data['message']
+                            self.write({'rechazo':"1 "+data_final})
                             return self.env['wk.wizard.message'].genrated_message("1 "+data_final,"Los datos no estan correctos" ,"https://navegasoft.com")
                 else:
                     raise Warning(result)
