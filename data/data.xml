@@ -71,7 +71,7 @@
         <field name="detalle">Tipo de documento</field>
     </record>
     <record id="facturan0b8" model="base_electronicos.line">
-        <field name="mp_id" ref="facturan0a"/>
+        <field name="mp_id" ref="facturan0a"/> 
         <field name="name">moneda</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">true</field>

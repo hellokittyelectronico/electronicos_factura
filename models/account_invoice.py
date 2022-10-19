@@ -228,21 +228,25 @@ class AccountMove(models.Model):
         valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
         response2={}
         valores_lineas = valores.mp_id
-        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id)])
+        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id),('company_id','=',self.company_id.id)])
         print("haber")
         print(self.journal_id)
         print(documento.tipo_factura)
+        print("self.move_type")
+        print(self)
+        print(self[0].move_type)
+        # print(self[1].move_type)
         if documento:
-            if self.move_type == "out_invoice" and documento.tipo_factura == "factura":
-                self.tipo_documento = documento.tipo_factura
-            elif self.move_type == "out_refund" and documento.tipo_factura == "factura":
-                self.tipo_documento = "Nota Credito"
-            elif self.move_type == "in_invoice" and documento.tipo_factura == "documento_soporte":
-                self.tipo_documento = documento.tipo_factura
-            elif self.move_type == "in_refund" and documento.tipo_factura == "documento_soporte":
-                self.tipo_documento = "Nota Credito Doc soporte"
-            elif self.move_type == "out_invoice" and documento.tipo_factura == "nota_debito_factura":
-                self.tipo_documento = documento.tipo_factura
+            if self[0].move_type == "out_invoice" and documento.tipo_factura == "factura":
+                self[0].tipo_documento = documento.tipo_factura
+            elif self[0].move_type == "out_refund" and documento.tipo_factura == "factura":
+                self[0].tipo_documento = "Nota Credito"
+            elif self[0].move_type == "in_invoice" and documento.tipo_factura == "documento_soporte":
+                self[0].tipo_documento = documento.tipo_factura
+            elif self[0].move_type == "in_refund" and documento.tipo_factura == "documento_soporte":
+                self[0].tipo_documento = "Nota Credito Doc soporte"
+            elif self[0].move_type == "out_invoice" and documento.tipo_factura == "nota_debito_factura":
+                self[0].tipo_documento = documento.tipo_factura
                 
                 
         # datos_generales = self.env['electronicos_factura.datos_generales'].search([('diario', '=', self.journal_id[0].id)])
@@ -419,6 +423,7 @@ class AccountMove(models.Model):
                     'name': tax_id.name, #tax_group_id.
                     'tax_id': tax['id'],
                     'codigo': int(tax_id.tipo_impuesto),
+                    'incluido': tax['price_include'],
                     'porcentaje': "{:.2f}".format(tax_id.amount),
                     'base': this_amount,
                     'amount': tax['amount']}
@@ -479,8 +484,13 @@ class AccountMove(models.Model):
         documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
         print(documento)
         if documento:
-            send = {'tipo_documento':self.tipo_documento}
+            print()
+            if self.tipo_factura=='4':
+                send = {'tipo_documento':'extranjero'}
+            else:
+                send = {'tipo_documento':self.tipo_documento}
         else:
+            self.write({'rechazo':"El diario no esta configurado en la tabla de envio"})
             return self.env['wk.wizard.message'].genrated_message("El diario no esta configurado en la tabla de envio "," Error en la configuracion","https://navegasoft.com") ,True
         for linea in valores_lineas:
             #buscar en el comprobante el codigo
@@ -492,6 +502,7 @@ class AccountMove(models.Model):
                         if self.partner_id.state_id.code:
                             send[linea.name] = eval(linea.campo_tecnico)
                         else:
+                            self.write({'rechazo':"El campo esta en blanco "+linea.campo_tecnico+ " " +linea.name})
                             return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                     elif linea.name.strip() == "fecha":
                         print("imprimiendo fecha")
@@ -510,6 +521,7 @@ class AccountMove(models.Model):
                         try:
                             safe_eval(linea.campo_tecnico, {'self': self}) #mode='exec',nocopy=True,
                         except Exception as e:
+                            self.write({'rechazo':"El campo tecnico NO EXISTE "+linea.campo_tecnico+ " " +linea.name})
                             return self.env['wk.wizard.message'].genrated_message("El campo tecnico NO EXISTE "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                         
                         if eval(linea.campo_tecnico):
@@ -517,11 +529,13 @@ class AccountMove(models.Model):
                         else:
                             if linea.obligatorio:
                                 print("no tiene campo tecnico")
+                                self.write({'rechazo':"El campo tecnico esta en blanco "+linea.campo_tecnico+ " " +linea.name})
                                 return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                 # else:
                 #     print("no congigurado")
                 #     return self.env['wk.wizard.message'].genrated_message("El campo no esta configurado"+linea.campo_tecnico,"Error en el campo"+linea.name,"https://navegasoft.com")    
             except SyntaxError:
+                self.write({'rechazo':"El campo tecnico no existe "+linea.campo_tecnico+ " " +linea.name})
                 return self.env['wk.wizard.message'].genrated_message("El campo tecnico no existe "+linea.campo_tecnico,"Error en el campo"+linea.name,"https://navegasoft.com"),True
         if "id_plataforma" not in send:
             send['id_plataforma'] =self.company_id.partner_id.id_plataforma
@@ -632,6 +646,7 @@ class AccountMove(models.Model):
                         else:
                             final_text = json.loads(json.dumps(final))#.encode().decode("utf-8") eval(
                             #final_text = final_error['error']
+                            self.write({'rechazo':"2 "+final_text['error']})
                             return self.env['wk.wizard.message'].genrated_message("2 "+final_text['error'], final_text['titulo'],final_text['link'])
                         # else:
                         #     return self.env['wk.wizard.message'].genrated_message('3 No hemos recibido una respuesta satisfactoria vuelve a enviarlo', 'Reenviar')    
@@ -641,6 +656,7 @@ class AccountMove(models.Model):
                             final_error = json.loads(json.dumps(final))
                             data = final_error["data"]
                             data_final = data['message']
+                            self.write({'rechazo':"1 "+data_final})
                             return self.env['wk.wizard.message'].genrated_message("1 "+data_final,"Los datos no estan correctos" ,"https://navegasoft.com")
                 else:
                     raise Warning(result)
