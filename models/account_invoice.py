@@ -462,6 +462,7 @@ class AccountMove(models.Model):
                                 'cantidad': line.quantity,
                                 'valor_unitario': "{:.2f}".format(amounts['total_excluded']),
                                 'price': "{:.2f}".format(price),
+                                'precio': line.price_unit,
                                 'incluido': incluido,
                                 'descuento':line.discount,
                                 'descripcion': line.name[:1000],
