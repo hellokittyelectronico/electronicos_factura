@@ -16,7 +16,7 @@ class aduaneros(models.Model):
     responsabilidad = fields.Char("Responsabilidad")
     descripcion = fields.Char("Descripcion")
 
-class partner_fact(models.Model):
+class partner_fact3(models.Model):
     _inherit = 'res.partner'
 
     vat_vd = fields.Char("Digito de verificacion")

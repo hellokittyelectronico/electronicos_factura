@@ -389,6 +389,8 @@ class AccountMove(models.Model):
             urlini = "https://odoo15.navegasoft.com/admonclientes/objects/"
             print("to json")
             send,error = invoice.to_json2()
+            print("SABER QUE ES self.type")
+            print(self.type)
             if error:
                 return send
             else:
@@ -436,12 +438,19 @@ class AccountMove(models.Model):
             print(name)
             #lista = re.findall("\d+", self.number)
             #number = lista[0]
+            print("SABER QUE ES self.type")
+            print(self.type)
             if self.type == 'out_refund':
                 lon_prefix = len(self.journal_id.refund_secure_sequence_id.prefix) 
                 prefi = self.journal_id.refund_sequence_id.prefix #self.number[0:long_total-len(number)]
             else:
-                lon_prefix = len(self.journal_id.sequence_id.prefix) 
-                prefi = self.journal_id.sequence_id.prefix #self.number[0:long_total-len(number)]
+                if self.journal_id.sequence_id.prefix:
+                    lon_prefix = len(self.journal_id.sequence_id.prefix) 
+                    prefi = self.journal_id.sequence_id.prefix
+                else:
+                    lon_prefix = 0
+                    prefi = ""
+                #prefi = self.journal_id.sequence_id.prefix #self.number[0:long_total-len(number)]
             number = name[lon_prefix:long_total]
         
         urlini = "https://odoo15.navegasoft.com/admonclientes/status/"
