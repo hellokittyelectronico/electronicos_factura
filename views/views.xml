@@ -225,7 +225,11 @@
         </record> 
 
 
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 0866cd3cfed4af8ab3a6f088021207be9add4c12
         <record id="view_invoice_electro_nuevo_inherit_form2" model="ir.ui.view">
             <field name="name">account.invoice.inheritnuevo.form</field>
             <field name="model">account.invoice</field>
@@ -345,11 +349,18 @@
                 </button>    --> 
                 <button name="action_invoice_draft" position="before"> 
                 	<button name="envio_directo2" type="object" string="Generar Documento Electronico Nuevo" 
+<<<<<<< HEAD
                 			 groups="base.group_user"/>
                 	<button name="imprimir2" type="object" string="Imprimir Documento Electronico Nuevo" 
                 			 groups="base.group_user"/>
 
                   
+=======
+                			 groups="base.group_user" attrs="{'invisible':['|', ('state','not in',('open', 'paid')),('estado_factura','in',('factura_correcta'))]}"/>
+                	<button name="imprimir2" type="object" string="Imprimir Documento Electronico Nuevo" 
+                			 groups="base.group_user" attrs="{'invisible':[ ('estado_factura','not in',('factura_correcta'))]}"/>
+                
+>>>>>>> 0866cd3cfed4af8ab3a6f088021207be9add4c12
                 </button>  
 
 
@@ -365,6 +376,14 @@
 
             </field>
         </record> 
+<<<<<<< HEAD
+=======
+                
+
+
+
+
+>>>>>>> 0866cd3cfed4af8ab3a6f088021207be9add4c12
 <!-- <button name="action_cfdi_generate" type="object" string="Generar documento electronico" 
                 			attrs="{'invisible':['|', ('state','not in',('posted')),('estado_factura','in',('factura_correcta'))]}" 
                 			class="oe_highlight" groups="base.group_user"/>

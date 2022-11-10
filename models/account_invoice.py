@@ -505,8 +505,8 @@ class AccountMove(models.Model):
                             import base64 
                             print(final_data)
                             if final_data['code'] == '400':
-                                return self.env['wk.wizard.message'].genrated_message('Estamos recibiendo un codigo 400 Es necesario esperar para volver imprimir el documento', 'Es necesario esperar para volver a imprimir el documento')
-                            elif final_data['code'] == '201':
+                                return self.env['wk.wizard.message'].genrated_message(final_data['code'], final_data)
+                            elif final_data['code'] == '201' or final_data['code'] == '200':
                                 print("el codigo")
                                 print(final_data['code'])
                                 image_64_encode = base64.b64decode(final_data['documentBase64']) #eval(
@@ -514,18 +514,27 @@ class AccountMove(models.Model):
                                 print("self.name+extension")
                                 print(self.number+extension)
                                 att_id = self.env['ir.attachment'].create({
-                                    'name': self.name+extension,
-                                    'type': 'binary',
-                                    'datas': i64,
-                                    #'datas_fname': self.name+extension,
-                                    'res_model': 'account.move',
-                                    'res_id': self.id,
-                                    })
+                                'name': name+extension,
+                                'type': 'binary',
+                                'datas': i64,
+                                'datas_fname': name+extension,
+                                'res_model': 'account.invoice',
+                                'res_id': self.id,
+                                'mimetype': 'application/xml'
+                                })
+                                # att_id = self.env['ir.attachment'].create({
+                                #     'name': self.name+extension,
+                                #     'type': 'binary',
+                                #     'datas': i64,
+                                #     #'datas_fname': self.name+extension,
+                                #     'res_model': 'account.invoice',
+                                #     'res_id': self.id,
+                                #     })
                                 if att_id:
                                     self.write({"impreso":True})
                                     return self.env['wk.wizard.message'].genrated_message("Ve a attachment","Factura impresa" ,"https://navegasoft.com")
                             else:
-                                return self.env['wk.wizard.message'].genrated_message('Estamos recibiendo un codigo de error Es necesario esperar para volver imprimir el documento', 'Es necesario esperar para volver a imprimir el documento')
+                                return self.env['wk.wizard.message'].genrated_message(final_data['code'], final_data)
                                 
                     else:
                         raise UserError(_('Ve a attachment, Factura ya impresa.'))
