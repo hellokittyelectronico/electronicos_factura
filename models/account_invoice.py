@@ -505,13 +505,22 @@ class AccountMove(models.Model):
                                 print("self.name+extension")
                                 print(self.number+extension)
                                 att_id = self.env['ir.attachment'].create({
-                                    'name': self.name+extension,
-                                    'type': 'binary',
-                                    'datas': i64,
-                                    #'datas_fname': self.name+extension,
-                                    'res_model': 'account.move',
-                                    'res_id': self.id,
-                                    })
+                                'name': name+extension,
+                                'type': 'binary',
+                                'datas': i64,
+                                'datas_fname': name+extension,
+                                'res_model': 'account.invoice',
+                                'res_id': self.id,
+                                'mimetype': 'application/xml'
+                                })
+                                # att_id = self.env['ir.attachment'].create({
+                                #     'name': self.name+extension,
+                                #     'type': 'binary',
+                                #     'datas': i64,
+                                #     #'datas_fname': self.name+extension,
+                                #     'res_model': 'account.invoice',
+                                #     'res_id': self.id,
+                                #     })
                                 if att_id:
                                     self.write({"impreso":True})
                                     return self.env['wk.wizard.message'].genrated_message("Ve a attachment","Factura impresa" ,"https://navegasoft.com")

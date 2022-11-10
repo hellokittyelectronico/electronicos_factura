@@ -223,6 +223,152 @@
 
             </field>
         </record> 
+
+
+ 
+        <record id="view_invoice_electro_nuevo_inherit_form2" model="ir.ui.view">
+            <field name="name">account.invoice.inheritnuevo.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form" />
+            <field name="arch" type="xml">
+                
+                <xpath expr="//notebook" position="inside">
+                <!-- attrs="{'invisible':['|', ('type','!=','out_invoice'),('tipoc_o_d','=','Debito')]}" -->
+                    <page name="info_cdfi" string="Documento soporte electronico" attrs="{'invisible':[('tipo_documento','!=','documento_soporte')]}">
+                            <group cols="4">
+                                <group string="Detalles de Pago">
+                                <field name="tipo_documento" invisible='1'/>
+                                <field name="tipoc_o_d" invisible='1'/>
+                                	<field name="tipo_pago"/>
+                                	<field name="methodo_pago"/>
+                                	<field name="tipo_factura"/>
+                                </group>
+                                <!-- <group string="Detalles de Pago" attrs="{'invisible':[ ('estado_factura','=','factura_correcta')]}">
+                                    <field name="nota_debito" />
+                                    <field name="factura" /> 
+                                </group> -->
+                                <group  string="Detalles de Documento Electronico" >
+                                	<field name="estado_factura"/>
+                                	<field name="fecha_factura"/>
+                                    <field name="xml_invoice_link"/>
+                                    <field name="codigo_qr"/>
+                                	<field name="cufe"/>
+                                    <field name="rechazo"/>
+                                	<field name="grafica_link"/>
+                                </group>
+                                <!-- <field name="tipo_comprobante"/> -->
+                                	<!--<field name="folio_fiscal"/>
+        				                <field name="confirmacion"/>-->
+					<!--<group  string="CFDI Relacionados">
+                                	<field name="tipo_relacion"/>
+                                	<field name="uuid_relacionado"/>
+                                </group>-->
+                            </group>
+                    </page>
+                    <page name="info_cdfi" string="Factura electronica" attrs="{'invisible':[('tipo_documento','!=','factura')]}">
+                            <group cols="4">
+                                <group string="Detalles de Pago">
+                                    <!-- <field name="tipoc_o_d" invisible='1'/> -->
+                                	<field name="tipo_pago"/>
+                                	<field name="methodo_pago"/>
+                                	<field name="tipo_factura"/>
+                                </group>
+                                <!-- <group string="Detalles de Pago" attrs="{'invisible':[ ('estado_factura','=','factura_correcta')]}">
+                                    <field name="nota_debito" />
+                                    <field name="factura" /> 
+                                </group> -->
+                                <group  string="Detalles de Factura" >
+                                	<field name="estado_factura"/>
+                                	<field name="fecha_factura"/>
+                                    <field name="xml_invoice_link"/>
+                                    <field name="codigo_qr"/>
+                                	<field name="cufe"/>
+                                    <field name="rechazo"/>
+                                	<field name="grafica_link"/>
+                                </group>
+                                <!-- <field name="tipo_comprobante"/> -->
+                                	<!--<field name="folio_fiscal"/>
+        				                <field name="confirmacion"/>-->
+					<!--<group  string="CFDI Relacionados">
+                                	<field name="tipo_relacion"/>
+                                	<field name="uuid_relacionado"/> 
+                                </group>-->
+                            </group>
+                    </page>
+                <page name="info_cdfi" string="Nota Credito electronica" attrs="{'invisible':[('tipo_documento','!=','nota_credito_factura')]}">
+                            <group cols="4">
+                                <group  string="Detalles de Nota credito" >
+                                    <field name="nota_credito"/>
+                                    <field name="factura"/>
+                                </group>
+
+                                <group  string="Detalles de Factura" >
+                                	<field name="estado_factura"/>
+                                	<field name="fecha_factura"/>
+                                    <field name="codigo_qr"/>
+                                	<field name="cufe"/>
+                                    <field name="rechazo"/>
+                                	<field name="grafica_link"/>
+                                </group>
+                            </group>
+                </page>
+
+                <page name="info_cdfi" string="Nota Debito electronica" attrs="{'invisible':[('tipo_documento','!=','nota_debito_factura')]}">
+                            <group cols="4">
+                                
+                                <group  string="Detalles de Nota debito" >
+                                <!-- <field name="tipoc_o_d" invisible='1'/> -->
+                                <!-- attrs="{'invisible':[ ('tipoc_o_d','!=','Debito')]}" -->
+                                    <field name="nota_debito" /> 
+                                    <field name="factura" />                                   
+                                </group>
+
+                                <group  string="Detalles de Factura" >
+                                	<field name="estado_factura"/>
+                                	<field name="fecha_factura"/>
+                                    <field name="codigo_qr"/>
+                                	<field name="cufe"/>
+                                    <field name="rechazo"/>
+                                	<field name="grafica_link"/>
+                                </group>
+
+                            </group>
+                    </page>
+
+
+                </xpath>
+                <!--<field name="payment_term_id" position="after">
+                	<field name="factura_cfdi" invisible="1"/>
+                </field>      '|',('factura_cfdi','=',True),   '|',('factura_cfdi','=',False), -->    
+                 <!-- <button name="action_invoice_sent" position="before">
+                	<button name="action_invoice_sent" type="object" string="Enviar por correo-e" attrs="{'invisible':[('state', 'not in', ('cancel'))]}" groups="base.group_user"/>
+                </button>    --> 
+                <button name="action_invoice_draft" position="before"> 
+                	<button name="envio_directo2" type="object" string="Generar Documento Electronico Nuevo" 
+                			 groups="base.group_user" attrs="{'invisible':['|', ('state','not in',('open', 'paid')),('estado_factura','in',('factura_correcta'))]}"/>
+                	<button name="imprimir2" type="object" string="Imprimir Documento Electronico Nuevo" 
+                			 groups="base.group_user" attrs="{'invisible':[ ('estado_factura','not in',('factura_correcta'))]}"/>
+                
+                </button>  
+
+
+                 <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="tipo_documento"  />
+                
+                
+            </xpath>
+
+                
+                
+                  
+
+            </field>
+        </record> 
+                
+
+
+
+
 <!-- <button name="action_cfdi_generate" type="object" string="Generar documento electronico" 
                 			attrs="{'invisible':['|', ('state','not in',('posted')),('estado_factura','in',('factura_correcta'))]}" 
                 			class="oe_highlight" groups="base.group_user"/>
