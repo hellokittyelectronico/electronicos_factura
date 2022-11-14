@@ -163,7 +163,7 @@
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">Prefijo_del_diario</field>
         <field name="categoria">factura</field>
-        <field name="obligatorio">true</field>
+        <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.journal_id.sequence_id.prefix</field>
         <field name="detalle">Prefijo del diario</field>
     </record>
@@ -586,14 +586,14 @@
         <field name="detalle">cufe factura de la nota credito</field>
     </record>
 
-    <!-- <record id="facturan0b70" model="base_electronicos.line">
+    <record id="facturan0b70" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">code_refund</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.journal_id.code_refund</field>
         <field name="detalle">codigo refund nota credito</field>
-    </record> -->
+    </record>
 
     <record id="facturan0b71" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
@@ -625,12 +625,12 @@
     </record>
 
 
-    <!-- <record id="facturan0b74" model="base_electronicos.line">
+    <record id="facturan0b74" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">ini_refund</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
-        <field name="campo_tecnico">self.journal_id.number_refund_to</field>
+        <field name="campo_tecnico">self.journal_id.sequence_id.dian_resolution_ids.number_to</field>
         <field name="detalle">Inicio numeracion refund</field>
     </record>
 
@@ -639,9 +639,9 @@
         <field name="name">fin_refund</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
-        <field name="campo_tecnico">self.journal_id.number_refund_from</field>
+        <field name="campo_tecnico">self.journal_id.sequence_id.dian_resolution_ids.number_from</field>
         <field name="detalle">Fin numeracion refund</field>
-    </record> -->
+    </record>
 
 <record id="facturan0b76" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
