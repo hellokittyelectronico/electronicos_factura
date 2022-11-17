@@ -86,7 +86,7 @@
                     <field name="periodo_codigo" string="Código" />
                 </xpath> 
                 
-                <xpath expr="//field[@name='line_ids']/tree/field[@name='quantity']" position="after">
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="after">
                 <!-- attrs="{'invisible':[('tipo_documento','!=','documento_soporte')]}" -->
                     <field name="periodo_fecha" string="Fecha" invisible="1"/>
                     <field name="periodo_codigo" string="Código" invisible="1" />
