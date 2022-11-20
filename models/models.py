@@ -50,7 +50,7 @@ class base_electronicos(models.Model):
 
 
 class partner_fact(models.Model):
-    _name = 'res.partner'
+    # _name = 'res.partner'
     _inherit = 'res.partner'
 
     #vat = fields.Char('Numero de documento')
