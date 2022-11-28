@@ -275,7 +275,7 @@
         <field name="name">dv_partner</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
-        <field name="campo_tecnico">self.partner_id.dv_plataforma</field>
+        <field name="campo_tecnico">self.partner_id.vat_vd</field>
         <field name="detalle">dv partner</field>
     </record>
     <record id="facturan0b34" model="base_electronicos.line">
