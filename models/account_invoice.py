@@ -621,7 +621,10 @@ class AccountMove(models.Model):
                     send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":self.tipo_documento}
                     cufe = self.pedircufe(send,urlini)
                     print(cufe)
-                    self.factura.write({"cufe":cufe['cufe']})
+                    if 'cufe' in cufe:
+                        self.factura.write({"cufe":cufe['cufe']})
+                    else:
+                        return self.env['wk.wizard.message'].genrated_message("2 "+cufe, "Error pidiendo el cufe","http://navegasoft.com")
                     # return
                     #self.write({"cufe":})
             send,error = invoice.to_json()
