@@ -624,7 +624,7 @@ class AccountMove(models.Model):
                     if 'cufe' in cufe:
                         self.factura.write({"cufe":cufe['cufe']})
                     else:
-                        return self.env['wk.wizard.message'].genrated_message("2 "+cufe, "Error pidiendo el cufe","http://navegasoft.com")
+                        return self.env['wk.wizard.message'].genrated_message("2 "+cufe['error'], "Error pidiendo el cufe","http://navegasoft.com")
                     # return
                     #self.write({"cufe":})
             send,error = invoice.to_json()
