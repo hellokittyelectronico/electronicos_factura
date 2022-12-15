@@ -17,7 +17,7 @@
 			<field name="model">account.journal</field>
 			<field name="inherit_id" ref="account.view_account_journal_form"/>
 			<field name="arch" type="xml">
-				<field name="default_account_id" position="after">
+				<field name="code" position="after">
 					<field name="code_refund"/>
 					<field name="secure_sequence_id"  />
 				</field>

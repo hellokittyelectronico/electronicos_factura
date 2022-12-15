@@ -314,7 +314,10 @@ class AccountMove(models.Model):
         documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
         print(documento)
         if documento:
-            send = {'tipo_documento':documento.tipo_factura}
+            if documento.tipo_factura == "factura" and self.type == 'out_refund':
+                send = {'tipo_documento':"nota_credito"}
+            else:
+                send = {'tipo_documento':documento.tipo_factura}
         else:
             return self.env['wk.wizard.message'].genrated_message("El diario no esta configurado en la tabla de envio "," Error en la configuracion","https://navegasoft.com") ,True
         for linea in valores_lineas:
@@ -388,7 +391,32 @@ class AccountMove(models.Model):
             # self.HoraGen = str(current_time)
             urlini = "https://odoo15.navegasoft.com/admonclientes/objects/"
             print("to json")
+            valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
+            documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
+            print(documento)
+            ## if not self.factura.cufe and (self.tipo_documento == "Nota Credito" ): or self.tipo_documento == "Nota Credito Doc soporte"
+            if documento.tipo_factura == "factura" and self.type == 'out_refund':
+                if not self.factura:
+                    raise UserError("Recuerda que debes asociar una factura y un tipo.")
+                else:
+                    long_total = len(self.factura.name)
+                    prefijo = self.factura.journal_id.code
+                    print(prefijo)
+                    lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
+                    #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
+                    folio = self.factura.name[lon_prefix:long_total] 
+                    send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":self.tipo_documento}
+                    cufe,error = self.pedircufe(send,urlini)
+                    if error:
+                        return cufe
+                    print(cufe)
+                    self.factura.write({"cufe":cufe['cufe']})
+                    # return
+                    #self.write({"cufe":})
+
             send,error = invoice.to_json2()
+            print("SABER QUE ES self.type")
+
             if error:
                 return send
             else:
@@ -425,6 +453,54 @@ class AccountMove(models.Model):
                     raise Warning(result)
                     return self.env['wk.wizard.message'].genrated_message('Existen problemas de coneccion debes reportarlo con navegasoft', 'Servidor')
 
+    def pedircufe(self,send,urlini):
+        headers = {'content-type': 'application/json'}
+        print("PIDENDO CUFE 99999999999999999")
+        # print(send)
+        resultado = requests.post(urlini,headers=headers,data = json.dumps(send, indent=4, sort_keys=True, default=str))
+        print(resultado.text)
+
+        if resultado.status_code == 200:
+            resultado2 = json.loads(resultado.text)
+            print(resultado2["result"])
+            if "result" in resultado2:
+                final_text = json.loads(json.dumps(resultado2))
+                result = final_text["result"]
+                print("final_error")
+                print(final_text)
+                print("result")
+                print(result)
+                result = json.loads(json.dumps(result))
+                print(result)
+                print(result['error'])
+                if 'error' in result:
+                    error = True
+                    return self.env['wk.wizard.message'].genrated_message(result['error'],"Error pidiendo cufe" ,result['link']),error
+                error = false
+                return result,error
+            #     if "error_d" in final:
+            #         if "transactionID" in final:
+            #             print("final")
+            #             print(resultado)
+            #             final_text = json.loads(json.dumps(final))#eval()
+            #             self.write({"impreso":False,"transaccionID":final_text['transactionID'],"estado_factura":"Generada_correctamente"})
+            #         return self.env['wk.wizard.message'].genrated_message(final_text['mensaje'],final_text['titulo'] ,final_text['link'])
+            #     else:
+            #         final_text = json.loads(json.dumps(final))#.encode().decode("utf-8") eval(
+            #         #final_text = final_error['error']
+            #         return self.env['wk.wizard.message'].genrated_message("2 "+final_text['error'], final_text['titulo'],final_text['link'])
+            #     # else:
+            #     #     return self.env['wk.wizard.message'].genrated_message('3 No hemos recibido una respuesta satisfactoria vuelve a enviarlo', 'Reenviar')    
+            # else:
+            #     if "error" in resultado:
+            #         final = resultado["error"]
+            #         final_error = json.loads(json.dumps(final))
+            #         data = final_error["data"]
+            #         data_final = data['message']
+            #         return self.env['wk.wizard.message'].genrated_message("1 "+data_final,"Los datos no estan correctos" ,"https://navegasoft.com")
+        else:
+            raise Warning(result)
+
 
     def imprimir2(self):
         for invoice in self:
@@ -436,12 +512,19 @@ class AccountMove(models.Model):
             print(name)
             #lista = re.findall("\d+", self.number)
             #number = lista[0]
+            print("SABER QUE ES self.type")
+            print(self.type)
             if self.type == 'out_refund':
                 lon_prefix = len(self.journal_id.refund_secure_sequence_id.prefix) 
                 prefi = self.journal_id.refund_sequence_id.prefix #self.number[0:long_total-len(number)]
             else:
-                lon_prefix = len(self.journal_id.sequence_id.prefix) 
-                prefi = self.journal_id.sequence_id.prefix #self.number[0:long_total-len(number)]
+                if self.journal_id.sequence_id.prefix:
+                    lon_prefix = len(self.journal_id.sequence_id.prefix) 
+                    prefi = self.journal_id.sequence_id.prefix
+                else:
+                    lon_prefix = 0
+                    prefi = ""
+                #prefi = self.journal_id.sequence_id.prefix #self.number[0:long_total-len(number)]
             number = name[lon_prefix:long_total]
         
         urlini = "https://odoo15.navegasoft.com/admonclientes/status/"
@@ -496,7 +579,7 @@ class AccountMove(models.Model):
                             import base64 
                             print(final_data)
                             if final_data['code'] == '400':
-                                return self.env['wk.wizard.message'].genrated_message(final_data['code'], final_data)
+                                return self.env['wk.wizard.message'].genrated_message(final_data['error'], final_data['code'])
                             elif final_data['code'] == '201' or final_data['code'] == '200':
                                 print("el codigo")
                                 print(final_data['code'])
@@ -525,7 +608,7 @@ class AccountMove(models.Model):
                                     self.write({"impreso":True})
                                     return self.env['wk.wizard.message'].genrated_message("Ve a attachment","Factura impresa" ,"https://navegasoft.com")
                             else:
-                                return self.env['wk.wizard.message'].genrated_message(final_data['code'], final_data)
+                                return self.env['wk.wizard.message'].genrated_message(final_data['error'], final_data['code'])
                                 
                     else:
                         raise UserError(_('Ve a attachment, Factura ya impresa.'))

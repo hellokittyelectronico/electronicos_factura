@@ -10,9 +10,9 @@
             	<field name="estado_factura" string="Firmado"/>
             </field>    
         </field>
-    </record> -->
-
-    <!-- <record id="campos_factura_partner" model="ir.ui.view">
+    </record>  -->
+    
+     <record id="campos_factura_partner" model="ir.ui.view">
         <field name="name">res.partner_facturacion</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
@@ -26,9 +26,9 @@
                     <field name="correo_factura" />
                     <field name="regimen_fiscal" />
                     
-                    <field name="tipo_documento_plataforma" />
+                    <!-- <field name="tipo_documento_plataforma" /> 
                     <field name="numero_plataforma" />
-                    <field name="dv_plataforma" />
+                    <field name="dv_plataforma" />-->
 
                     <field name="id_plataforma" />
                     <field name="password" />
@@ -57,7 +57,7 @@
 
 
 
-        <!-- <record id="validar_email" model="ir.ui.view">
+         <record id="validar_email" model="ir.ui.view">
             <field name="name">res.partner_valid</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
@@ -72,7 +72,7 @@
             </xpath>
 
             </field>
-      </record> -->
+      </record>
 
         <record id="view_invoice_electro_inherit_form2" model="ir.ui.view">
             <field name="name">account.invoice.inherit2.form</field>
@@ -345,10 +345,11 @@
                 </button>    --> 
                 <button name="action_invoice_draft" position="before"> 
                 	<button name="envio_directo2" type="object" string="Generar Documento Electronico Nuevo" 
-                			 groups="base.group_user" attrs="{'invisible':['|', ('state','not in',('open', 'paid')),('estado_factura','in',('factura_correcta'))]}"/>
+                			 groups="base.group_user"/>
                 	<button name="imprimir2" type="object" string="Imprimir Documento Electronico Nuevo" 
-                			 groups="base.group_user" attrs="{'invisible':[ ('estado_factura','not in',('factura_correcta'))]}"/>
-                
+                			 groups="base.group_user"/>
+
+                  
                 </button>  
 
 

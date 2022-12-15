@@ -29,7 +29,7 @@
         'views/views.xml',
         # 'views/templates.xml',
         # 'views/ir_sequence_view.xml',
-        # 'views/account_journal_view.xml',
+         'views/account_journal_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
