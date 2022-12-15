@@ -271,7 +271,7 @@ class AccountMove(models.Model):
                     'rte_ica': tax_id.rte_ica,
                     'name': tax_id.name, #tax_group_id.
                     'tax_id': tax['id'],
-                    'porcentaje': "{:.4f}".format(tax_id.amount*-1) if tipo_documento == "factura" else "{:.2f}".format(tax_id.amount*-1),
+                    'porcentaje': "{:.4f}".format(tax_id.amount*-1) if self.tipo_documento == "factura" else "{:.2f}".format(tax_id.amount*-1),
                     'valor_base': this_amount,
                     'amount': tax['amount'],
                     'valor_retenido': tax['amount']*-1,}
