@@ -22,6 +22,8 @@
 					<field name="number_refund_from"/>
 					<field name="number_refund_to"/>
 					<field name="resolution_refund_number"/>
+					<field name="date_from_refund_number"/>
+					<field name="date_to_refund_number"/>
 					<field name="secure_sequence_id"  />
 				</field>
 			</field>

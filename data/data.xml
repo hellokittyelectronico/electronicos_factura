@@ -630,7 +630,7 @@
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.journal_id.number_refund_to</field>
-        <field name="detalle">Inicio numeracion refund</field>
+        <field name="detalle">Fin numeracion refund</field>
     </record>
 
     <record id="facturan0b75" model="base_electronicos.line">
@@ -639,7 +639,7 @@
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.journal_id.number_refund_from</field>
-        <field name="detalle">Fin numeracion refund</field>
+        <field name="detalle">Inicio numeracion refund</field>
     </record>
 
     <record id="facturan0b76" model="base_electronicos.line">
@@ -648,7 +648,7 @@
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.partner_id.zip</field>
-        <field name="detalle">Fin numeracion refund</field>
+        <field name="detalle">Codigo zip partner</field>
     </record>
     <record id="facturan0b77" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
@@ -657,5 +657,22 @@
         <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.journal_id.resolution_refund_number</field>
         <field name="detalle">Resolucion refund numero</field>
+    </record>
+    <record id="facturan0b78" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">date_from_refund_number</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.date_from_refund_number</field>
+        <field name="detalle">Fecha Inicio numeracion refund</field>
+    </record>
+
+    <record id="facturan0b79" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">date_to_refund_number</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.date_to_refund_number</field>
+        <field name="detalle">Fecha Fin numeracion refund</field>
     </record>
 </odoo>
