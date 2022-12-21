@@ -137,7 +137,9 @@ class AccountMove(models.Model):
     # PeriodoNomina = fields.Char('Periodo Nomina') 
     # TipoMoneda = fields.Char('TipoMoneda', default="COP") 
 
-    # Notas = fields.Char('Notas')    
+    # Notas = fields.Char('Notas')
+    compania_prueba = fields.Integer("id compania")
+    diario_prueba = fields.Integer("diario")  
     tipo_documento = fields.Char(string="Documento", compute='documento',store=True)#
     
     sub_tipo_documento = fields.Selection([
@@ -223,7 +225,7 @@ class AccountMove(models.Model):
         return res
 
 
-    @api.depends('journal_id')
+    @api.depends('journal_id','move_type')
     def documento(self):
         valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
         response2={}
@@ -236,6 +238,8 @@ class AccountMove(models.Model):
         print(self)
         print(self[0].move_type)
         # print(self[1].move_type)
+        self.compania_prueba = self.company_id.id
+        self.diario_prueba = self.journal_id[0].id
         if documento:
             if self[0].move_type == "out_invoice" and documento.tipo_factura == "factura":
                 self[0].tipo_documento = documento.tipo_factura
