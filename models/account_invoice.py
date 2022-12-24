@@ -359,6 +359,8 @@ class AccountMove(models.Model):
     def generate_cfdi_invoice(self):
         # after validate, send invoice data to external system via http post
         for invoice in self:
+            if not invoice.tipo_documento:
+                self.documento()
             if estado_factura == 'factura_correcta':
                 raise UserError(_('Error para timbrar factura, Factura ya generada.'))
             if estado_factura == 'factura_cancelada':
