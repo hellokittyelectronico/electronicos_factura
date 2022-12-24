@@ -604,6 +604,8 @@ class AccountMove(models.Model):
     def envio_directo(self):
         import time
         for invoice in self:
+            if not invoice.tipo_documento:
+                self.documento()
             if self.estado_factura == 'factura_correcta':
                 raise UserError(_('Error para timbrar factura, Factura ya generada.'))
             if self.estado_factura == 'factura_cancelada':
