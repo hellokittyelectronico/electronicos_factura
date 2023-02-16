@@ -400,6 +400,9 @@ class AccountMove(models.Model):
         valorimpuestos = 0
         t_amount_wo_tax = 0
         for line in self.invoice_line_ids:
+            print("aca imprimiendo")
+            print (line.name)
+            print(line.product_id)
             num += 1
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
             amounts = line.tax_ids.compute_all(price, line.currency_id, line.quantity, product=line.product_id, partner=line.move_id.partner_id)
@@ -464,6 +467,7 @@ class AccountMove(models.Model):
             # t_amount_wo_tax += this_amount
 
             invoice_lines.append({'numero_linea':num,
+                                'product_id':line.product_id.id,
                                 'codigo':line.product_id.default_code,
                                 'cantidad': line.quantity,
                                 'valor_unitario': "{:.2f}".format(amounts['total_excluded']),
@@ -745,7 +749,7 @@ class AccountMove(models.Model):
                     import base64 
                     print(final_data)
                     if final_data['code'] == '400':
-                        return self.env['wk.wizard.message'].genrated_message('Estamos recibiendo un codigo 400 Es necesario esperar para volver imprimir el documento', 'Es necesario esperar para volver a imprimir el documento')
+                        return self.env['wk.wizard.message'].genrated_message(data_final,"Error en el envio" ,"https://navegasoft.com")
                     elif final_data['code'] == '200':
                         print("el codigo")
                         print(final_data['code'])
@@ -783,7 +787,7 @@ class AccountMove(models.Model):
                             self.write({"impreso":True})
                             return self.env['wk.wizard.message'].genrated_message("Ve a attachment","Factura impresa" ,"https://navegasoft.com")
                     else:
-                        return self.env['wk.wizard.message'].genrated_message('Estamos recibiendo un codigo de error Es necesario esperar para volver imprimir el documento', 'Es necesario esperar para volver a imprimir el documento')
+                        return self.env['wk.wizard.message'].genrated_message(final_data,"Error en el envio" ,"https://navegasoft.com")
                                 
                     # else:
                     #     raise UserError(_('Ve a attachment, Factura ya impresa.'))
