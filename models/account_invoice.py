@@ -178,7 +178,7 @@ class AccountMove(models.Model):
                 payment_term_id = p.property_payment_term_id.id
             
             delivery_partner_id = self.partner_id.id #self.get_delivery_partner_id()
-            fiscal_position = self.env['account.fiscal.position']._get_fiscal_position(self.partner_id.id)
+            fiscal_position = self.env['account.fiscal.position']._get_fiscal_position(self.partner_id)
 #, delivery_id=delivery_partner_id
             if p.tipo_factura:
                 tipo_factura = p.tipo_factura
