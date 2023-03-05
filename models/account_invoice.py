@@ -486,10 +486,10 @@ class AccountMove(models.Model):
         print(documento)
         if documento:
             print()
-            if self.tipo_factura=='4':
-                send = {'tipo_documento':'extranjero'}
-            else:
-                send = {'tipo_documento':self.tipo_documento}
+            # if self.tipo_factura=='4':
+            #     send = {'tipo_documento':'extranjero'}
+            # else:
+            send = {'tipo_documento':self.tipo_documento}
         else:
             self.write({'rechazo':"El diario no esta configurado en la tabla de envio"})
             return self.env['wk.wizard.message'].genrated_message("El diario no esta configurado en la tabla de envio "," Error en la configuracion","https://navegasoft.com") ,True
