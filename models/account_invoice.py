@@ -458,6 +458,7 @@ class AccountMove(models.Model):
             # t_amount_wo_tax += this_amount
 
             invoice_lines.append({'numero_linea':num,
+                                'product_id':line.product_id.id,
                                 'codigo':line.product_id.default_code,
                                 'cantidad': line.quantity,
                                 'valor_unitario': "{:.2f}".format(amounts['total_excluded']),
@@ -865,20 +866,38 @@ class Accountrefund(models.TransientModel):
 
 
     # VERSION 15
+    # def _prepare_default_reversal(self, move):
+    #     reverse_date = self.date if self.date_mode == 'custom' else move.date
+    #     return {
+    #         'ref': _('Reversal of: %(move_name)s, %(reason)s', move_name=move.name, reason=self.reason) 
+    #                if self.reason
+    #                else _('Reversal of: %s', move.name),
+    #         'date': reverse_date,
+    #         'invoice_date': move.is_invoice(include_receipts=True) and (self.date or move.date) or False,
+    #         'journal_id': self.journal_id.id,
+    #         'invoice_payment_term_id': None,
+    #         'invoice_user_id': move.invoice_user_id.id,
+    #         'auto_post': True if reverse_date > fields.Date.context_today(self) else False,
+    #         'nota_credito':self.nota_credito,
+    #         'factura':move.id,
+    #         'estado_factura':'no_generada',
+    #     }
+
+    #VERSION 16
     def _prepare_default_reversal(self, move):
         reverse_date = self.date if self.date_mode == 'custom' else move.date
         return {
-            'ref': _('Reversal of: %(move_name)s, %(reason)s', move_name=move.name, reason=self.reason) 
+            'ref': _('Reversal of: %(move_name)s, %(reason)s', move_name=move.name, reason=self.reason)
                    if self.reason
                    else _('Reversal of: %s', move.name),
             'date': reverse_date,
+            'invoice_date_due': reverse_date,
             'invoice_date': move.is_invoice(include_receipts=True) and (self.date or move.date) or False,
             'journal_id': self.journal_id.id,
             'invoice_payment_term_id': None,
             'invoice_user_id': move.invoice_user_id.id,
-            'auto_post': True if reverse_date > fields.Date.context_today(self) else False,
+            'auto_post': 'at_date' if reverse_date > fields.Date.context_today(self) else 'no',
             'nota_credito':self.nota_credito,
             'factura':move.id,
             'estado_factura':'no_generada',
         }
-
