@@ -653,10 +653,10 @@ class AccountMove(models.Model):
                     if "result" in resultado:
                         final = resultado["result"]
                         if "error_d" in final:
+                            final_text = json.loads(json.dumps(final))#eval()
                             if "transactionID" in final:
                                 print("final")
                                 print(resultado)
-                                final_text = json.loads(json.dumps(final))#eval()
                                 self.write({"impreso":False,"transaccionID":final_text['transactionID'],"estado_factura":"Generada_correctamente"})
                             return self.env['wk.wizard.message'].genrated_message(final_text['mensaje'],final_text['titulo'] ,final_text['link'])
                         else:
