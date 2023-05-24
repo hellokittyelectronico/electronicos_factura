@@ -457,7 +457,8 @@ class AccountMove(models.Model):
                     'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
             valorimpuestos += valorimpuesto 
             # t_amount_wo_tax += this_amount
-
+            if not line.name:
+                raise UserError(_('Uno de los productos en la factura esta incompleto, por favor verifique. (Sin nombre)'))
             invoice_lines.append({'numero_linea':num,
                                 'product_id':line.product_id.id,
                                 'codigo':line.product_id.default_code,
