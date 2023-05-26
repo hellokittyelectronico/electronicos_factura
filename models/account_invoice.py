@@ -6,6 +6,7 @@ from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationE
 import babel
 from odoo.tools.safe_eval import safe_eval
 
+import re
 import time
 from dateutil import relativedelta
 from datetime import datetime, timedelta
@@ -456,7 +457,8 @@ class AccountMove(models.Model):
                     'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
             valorimpuestos += valorimpuesto 
             # t_amount_wo_tax += this_amount
-
+            if not line.name:
+                raise UserError(_('Uno de los productos en la factura esta incompleto, por favor verifique. (Sin nombre)'))
             invoice_lines.append({'numero_linea':num,
                                 'product_id':line.product_id.id,
                                 'codigo':line.product_id.default_code,
@@ -613,12 +615,18 @@ class AccountMove(models.Model):
                 if not self.factura:
                     raise UserError("Recuerda que debes asociar una factura y un tipo.")
                 else:
+                    # long_total = len(self.factura.name)
+                    # prefijo = self.factura.journal_id.code
+                    # print(prefijo)
+                    # lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
+                    # #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
+                    # folio = self.factura.name[lon_prefix:long_total] 
                     long_total = len(self.factura.name)
-                    prefijo = self.factura.journal_id.code
+                    lista = re.findall("\d+", self.factura.name)
+                    folio = lista[0]
+                    prefijo =  self.factura.name[0:long_total-len(folio)]
+                    
                     print(prefijo)
-                    lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
-                    #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
-                    folio = self.factura.name[lon_prefix:long_total] 
                     send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":self.tipo_documento}
                     cufe = self.pedircufe(send,urlini)
                     print(cufe)
