@@ -500,13 +500,13 @@ class AccountMove(models.Model):
             try:
                 #search de company_id in the field
                 if linea.campo_tecnico:
-                    if ("self.partner_id.state_id.code" == linea.campo_tecnico) | ("self.company_id.partner_id.state_id.code" == linea.campo_tecnico):
-                        if self.partner_id.state_id.code:
-                            send[linea.name] = eval(linea.campo_tecnico)
-                        else:
-                            self.write({'rechazo':"El campo esta en blanco "+linea.campo_tecnico+ " " +linea.name})
-                            return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
-                    elif linea.name.strip() == "fecha":
+                    # if ("self.partner_id.state_id.code" == linea.campo_tecnico) | ("self.company_id.partner_id.state_id.code" == linea.campo_tecnico):
+                    #     if self.partner_id.state_id.code:
+                    #         send[linea.name] = eval(linea.campo_tecnico)
+                    #     else:
+                    #         self.write({'rechazo':"El campo esta en blanco "+linea.campo_tecnico+ " " +linea.name})
+                    #         return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
+                    if linea.name.strip() == "fecha":
                         print("imprimiendo fecha")
                         fecha =str(self.date.strftime("%Y-%m-%d"))
                         print(fecha)
@@ -528,11 +528,11 @@ class AccountMove(models.Model):
                         
                         if eval(linea.campo_tecnico):
                             send[linea.name] = eval(linea.campo_tecnico)
-                        else:
-                            if linea.obligatorio:
-                                print("no tiene campo tecnico")
-                                self.write({'rechazo':"El campo tecnico esta en blanco "+linea.campo_tecnico+ " " +linea.name})
-                                return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
+                        # else:
+                            # if linea.obligatorio:
+                            #     print("no tiene campo tecnico")
+                            #     self.write({'rechazo':"El campo tecnico esta en blanco "+linea.campo_tecnico+ " " +linea.name})
+                            #     return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                 # else:
                 #     print("no congigurado")
                 #     return self.env['wk.wizard.message'].genrated_message("El campo no esta configurado"+linea.campo_tecnico,"Error en el campo"+linea.name,"https://navegasoft.com")    
