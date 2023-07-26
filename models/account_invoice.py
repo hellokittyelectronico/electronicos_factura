@@ -613,7 +613,8 @@ class AccountMove(models.Model):
             urlini = "https://odoo15.navegasoft.com/admonclientes/objects/"
             if not self.factura.cufe and (self.tipo_documento == "Nota Credito" or self.tipo_documento == "Nota Credito Doc soporte"):
                 if not self.factura:
-                    raise UserError("Recuerda que debes asociar una factura y un tipo.")
+                    pass
+                    #raise UserError("Recuerda que debes asociar una factura y un tipo.")
                 else:
                     # long_total = len(self.factura.name)
                     # prefijo = self.factura.journal_id.code
