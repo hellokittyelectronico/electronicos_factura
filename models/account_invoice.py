@@ -6,6 +6,7 @@ from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationE
 import babel
 from odoo.tools.safe_eval import safe_eval
 
+import re
 import time
 from dateutil import relativedelta
 from datetime import datetime, timedelta
@@ -178,8 +179,8 @@ class AccountMove(models.Model):
                 payment_term_id = p.property_payment_term_id.id
             
             delivery_partner_id = self.partner_id.id #self.get_delivery_partner_id()
-            fiscal_position = self.env['account.fiscal.position'].get_fiscal_position(self.partner_id.id, delivery_id=delivery_partner_id)
-
+            fiscal_position = self.env['account.fiscal.position']._get_fiscal_position(self.partner_id)
+#, delivery_id=delivery_partner_id
             if p.tipo_factura:
                 tipo_factura = p.tipo_factura
             if p.tipo_pago:
@@ -456,8 +457,10 @@ class AccountMove(models.Model):
                     'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
             valorimpuestos += valorimpuesto 
             # t_amount_wo_tax += this_amount
-
+            if not line.name:
+                raise UserError(_('Uno de los productos en la factura esta incompleto, por favor verifique. (Sin nombre)'))
             invoice_lines.append({'numero_linea':num,
+                                'product_id':line.product_id.id,
                                 'codigo':line.product_id.default_code,
                                 'cantidad': line.quantity,
                                 'valor_unitario': "{:.2f}".format(amounts['total_excluded']),
@@ -486,10 +489,10 @@ class AccountMove(models.Model):
         print(documento)
         if documento:
             print()
-            if self.tipo_factura=='4':
-                send = {'tipo_documento':'extranjero'}
-            else:
-                send = {'tipo_documento':self.tipo_documento}
+            # if self.tipo_factura=='4':
+            #     send = {'tipo_documento':'extranjero'}
+            # else:
+            send = {'tipo_documento':self.tipo_documento}
         else:
             self.write({'rechazo':"El diario no esta configurado en la tabla de envio"})
             return self.env['wk.wizard.message'].genrated_message("El diario no esta configurado en la tabla de envio "," Error en la configuracion","https://navegasoft.com") ,True
@@ -499,13 +502,13 @@ class AccountMove(models.Model):
             try:
                 #search de company_id in the field
                 if linea.campo_tecnico:
-                    if ("self.partner_id.state_id.code" == linea.campo_tecnico) | ("self.company_id.partner_id.state_id.code" == linea.campo_tecnico):
-                        if self.partner_id.state_id.code:
-                            send[linea.name] = eval(linea.campo_tecnico)
-                        else:
-                            self.write({'rechazo':"El campo esta en blanco "+linea.campo_tecnico+ " " +linea.name})
-                            return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
-                    elif linea.name.strip() == "fecha":
+                    # if ("self.partner_id.state_id.code" == linea.campo_tecnico) | ("self.company_id.partner_id.state_id.code" == linea.campo_tecnico):
+                    #     if self.partner_id.state_id.code:
+                    #         send[linea.name] = eval(linea.campo_tecnico)
+                    #     else:
+                    #         self.write({'rechazo':"El campo esta en blanco "+linea.campo_tecnico+ " " +linea.name})
+                    #         return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
+                    if linea.name.strip() == "fecha":
                         print("imprimiendo fecha")
                         fecha =str(self.date.strftime("%Y-%m-%d"))
                         print(fecha)
@@ -527,11 +530,11 @@ class AccountMove(models.Model):
                         
                         if eval(linea.campo_tecnico):
                             send[linea.name] = eval(linea.campo_tecnico)
-                        else:
-                            if linea.obligatorio:
-                                print("no tiene campo tecnico")
-                                self.write({'rechazo':"El campo tecnico esta en blanco "+linea.campo_tecnico+ " " +linea.name})
-                                return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
+                        # else:
+                            # if linea.obligatorio:
+                            #     print("no tiene campo tecnico")
+                            #     self.write({'rechazo':"El campo tecnico esta en blanco "+linea.campo_tecnico+ " " +linea.name})
+                            #     return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                 # else:
                 #     print("no congigurado")
                 #     return self.env['wk.wizard.message'].genrated_message("El campo no esta configurado"+linea.campo_tecnico,"Error en el campo"+linea.name,"https://navegasoft.com")    
@@ -610,14 +613,21 @@ class AccountMove(models.Model):
             urlini = "https://odoo15.navegasoft.com/admonclientes/objects/"
             if not self.factura.cufe and (self.tipo_documento == "Nota Credito" or self.tipo_documento == "Nota Credito Doc soporte"):
                 if not self.factura:
-                    raise UserError("Recuerda que debes asociar una factura y un tipo.")
+                    pass
+                    #raise UserError("Recuerda que debes asociar una factura y un tipo.")
                 else:
+                    # long_total = len(self.factura.name)
+                    # prefijo = self.factura.journal_id.code
+                    # print(prefijo)
+                    # lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
+                    # #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
+                    # folio = self.factura.name[lon_prefix:long_total] 
                     long_total = len(self.factura.name)
-                    prefijo = self.factura.journal_id.code
+                    lista = re.findall("\d+", self.factura.name)
+                    folio = lista[0]
+                    prefijo =  self.factura.name[0:long_total-len(folio)]
+                    
                     print(prefijo)
-                    lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
-                    #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
-                    folio = self.factura.name[lon_prefix:long_total] 
                     send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":self.tipo_documento}
                     cufe = self.pedircufe(send,urlini)
                     print(cufe)
@@ -638,10 +648,10 @@ class AccountMove(models.Model):
                     if "result" in resultado:
                         final = resultado["result"]
                         if "error_d" in final:
+                            final_text = json.loads(json.dumps(final))#eval()
                             if "transactionID" in final:
                                 print("final")
                                 print(resultado)
-                                final_text = json.loads(json.dumps(final))#eval()
                                 self.write({"impreso":False,"transaccionID":final_text['transactionID'],"estado_factura":"Generada_correctamente"})
                             return self.env['wk.wizard.message'].genrated_message(final_text['mensaje'],final_text['titulo'] ,final_text['link'])
                         else:
@@ -865,20 +875,38 @@ class Accountrefund(models.TransientModel):
 
 
     # VERSION 15
+    # def _prepare_default_reversal(self, move):
+    #     reverse_date = self.date if self.date_mode == 'custom' else move.date
+    #     return {
+    #         'ref': _('Reversal of: %(move_name)s, %(reason)s', move_name=move.name, reason=self.reason) 
+    #                if self.reason
+    #                else _('Reversal of: %s', move.name),
+    #         'date': reverse_date,
+    #         'invoice_date': move.is_invoice(include_receipts=True) and (self.date or move.date) or False,
+    #         'journal_id': self.journal_id.id,
+    #         'invoice_payment_term_id': None,
+    #         'invoice_user_id': move.invoice_user_id.id,
+    #         'auto_post': True if reverse_date > fields.Date.context_today(self) else False,
+    #         'nota_credito':self.nota_credito,
+    #         'factura':move.id,
+    #         'estado_factura':'no_generada',
+    #     }
+
+    #VERSION 16
     def _prepare_default_reversal(self, move):
         reverse_date = self.date if self.date_mode == 'custom' else move.date
         return {
-            'ref': _('Reversal of: %(move_name)s, %(reason)s', move_name=move.name, reason=self.reason) 
+            'ref': _('Reversal of: %(move_name)s, %(reason)s', move_name=move.name, reason=self.reason)
                    if self.reason
                    else _('Reversal of: %s', move.name),
             'date': reverse_date,
+            'invoice_date_due': reverse_date,
             'invoice_date': move.is_invoice(include_receipts=True) and (self.date or move.date) or False,
             'journal_id': self.journal_id.id,
             'invoice_payment_term_id': None,
             'invoice_user_id': move.invoice_user_id.id,
-            'auto_post': True if reverse_date > fields.Date.context_today(self) else False,
+            'auto_post': 'at_date' if reverse_date > fields.Date.context_today(self) else 'no',
             'nota_credito':self.nota_credito,
             'factura':move.id,
             'estado_factura':'no_generada',
         }
-

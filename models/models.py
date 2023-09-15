@@ -40,7 +40,22 @@ class datos_generales(models.Model):
             #documento = valores.general_factura.search([('diario', '=', docu.journal_id[0].id)])
             # print(documento)
             # if documento:
-            docu.tipo_documento = self.tipo_factura
+            if docu.move_type == "out_invoice" and self.tipo_factura == "factura":
+                docu.tipo_documento = self.tipo_factura
+            elif docu.move_type == "out_refund" and self.tipo_factura == "factura":
+                docu.tipo_documento = "Nota Credito"
+            else:
+                docu.tipo_documento = self.tipo_factura
+
+    # def documento(self):
+    #     valores = self.env['account.move'].search([('journal_id.id', '=', self.diario.id)])
+    #     response2={}
+    #     # print(self.journal_id[0])
+    #     for docu in valores: 
+    #         #documento = valores.general_factura.search([('diario', '=', docu.journal_id[0].id)])
+    #         # print(documento)
+    #         # if documento:
+    #         docu.tipo_documento = self.tipo_factura
 
 class base_electronicos(models.Model):
     _name = 'base_electronicos.tabla'

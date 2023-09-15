@@ -499,7 +499,7 @@
         <field name="name">fecha_vencimiento</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
-        <field name="campo_tecnico"></field>
+        <field name="campo_tecnico">self.invoice_date_due</field>
         <field name="detalle">fecha_vencimiento</field>
     </record>
     <record id="facturan0b60" model="base_electronicos.line">
