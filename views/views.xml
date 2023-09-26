@@ -108,7 +108,7 @@
                                     <field name="factura" /> 
                                 </group> -->
                                 <group  string="Detalles de Documento Electronico" >
-                                	<field name="estado_factura"/>
+                                	<field name="estado_factura" />
                                 	<field name="fecha_factura"/>
                                     <field name="xml_invoice_link"/>
                                     <field name="codigo_qr"/>
@@ -143,8 +143,8 @@
                                     <field name="factura" /> 
                                 </group> -->
                                 <group  string="Detalles de Documento Electronico" >
-                                	<field name="estado_factura"/>
-                                	<field name="fecha_factura"/>
+                                	<field name="estado_factura" readonly="1"/>
+                                	<field name="fecha_factura" readonly="1"/>
                                     <field name="xml_invoice_link"/>
                                     <field name="codigo_qr"/>
                                 	<field name="cufe"/>
@@ -173,8 +173,8 @@
                                     <field name="factura" /> 
                                 </group> -->
                                 <group  string="Detalles de Factura" >
-                                	<field name="estado_factura"/>
-                                	<field name="fecha_factura"/>
+                                	<field name="estado_factura" readonly="1"/>
+                                	<field name="fecha_factura" readonly="1"/>
                                     <field name="xml_invoice_link"/>
                                     <field name="codigo_qr"/>
                                 	<field name="cufe"/>
@@ -198,7 +198,7 @@
                                 </group>
 
                                 <group  string="Detalles de Factura" >
-                                	<field name="estado_factura"/>
+                                	<field name="estado_factura" readonly="1"/>
                                 	<field name="fecha_factura"/>
                                     <field name="codigo_qr"/>
                                 	<field name="cufe"/>
@@ -219,7 +219,7 @@
                                 </group>
 
                                 <group  string="Detalles de Factura" >
-                                	<field name="estado_factura"/>
+                                	<field name="estado_factura" readonly="1"/>
                                 	<field name="fecha_factura"/>
                                     <field name="codigo_qr"/>
                                 	<field name="cufe"/>
