@@ -149,6 +149,22 @@ class AccountMove(models.Model):
 
     calidades_atributos = fields.Many2many("account.calidadess")
     usuario_aduanero = fields.Many2many("account.aduaneros")    
+    country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
+    
+    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
+
+    @api.depends('country_id')
+    def _compute_is_colombia(self):
+        for record in self:
+            record.is_colombia = record.country_id.code == 'CO'
+
+    @api.depends('country_id')
+    def _compute_pais(self):
+        for record in self:
+            record.country_id = record.company_id.country_id.id
+
+
+
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
         account_id = False
@@ -795,6 +811,7 @@ class AccountMove(models.Model):
             raise Warning(result)
 
 
+
 class calidades(models.Model):
     _name = 'account.calidadess'
     
@@ -832,7 +849,19 @@ class AccountMoveLine(models.Model):
 
     periodo_fecha = fields.Date("Fecha periodo", required=True, default=fields.Date.context_today)
     periodo_codigo = fields.Selection(selection=[('1', 'Por operación'),('2', 'Acumulado Semanal'),],string=_('Periodo'), required=True,default='1')
+    country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
+    
+    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
 
+    @api.depends('country_id')
+    def _compute_is_colombia(self):
+        for record in self:
+            record.is_colombia = record.country_id.code == 'CO'
+
+    @api.depends('country_id')
+    def _compute_pais(self):
+        for record in self:
+            record.country_id = record.company_id.country_id.id
 
 
 # class AccountMoveLine(models.Model):
