@@ -19,7 +19,8 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
-                <page name="info_cdfi" string="Factura electronica" attrs="{'invisible':[('is_colombia', '=', False)]}" >
+                <page name="info_cdfi" string="Factura electronica" > 
+                    <!-- attrs="{'invisible':[('is_colombia', '=', False)]}" -->
                 <group cols="4">
                     <field name="tipo_pago" string="Tipo de Pago" />
                     <field name="metodo_pago" string="Método de pago" />
@@ -67,9 +68,10 @@
                 <attribute name="attrs">{'required':[('is_company','=',True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='website']" position="after">
-                <field name="tipo_contribuyente" string="Tipo de Contribuyente" attrs="{'invisible':[('is_colombia', '=', False)]}"/>
-                <field name="tipo_regimen" string="Tipo de Régimen" attrs="{'invisible':[('is_colombia', '=', False)]}"/>   
-                <field name="ciiu_id" attrs="{'invisible':[('is_colombia', '=', False)]}"/>
+                <!-- attrs="{'invisible':[('is_colombia', '=', False)]}" -->
+                <field name="tipo_contribuyente" string="Tipo de Contribuyente" />
+                <field name="tipo_regimen" string="Tipo de Régimen" />   
+                <field name="ciiu_id"/>
             </xpath>
 
             </field>
@@ -164,7 +166,7 @@
                                 </group>-->
                             </group>
                     </page>
-                    <page name="info_cdfi" string="Factura electronica" attrs="{'invisible':['|',('tipo_documento','!=','factura'),('is_colombia', '=', False)]}">
+                    <page name="info_cdfi" string="Factura electronica" attrs="{'invisible':[('tipo_documento','!=','factura'),('is_colombia', '=', False)]}">
                             <group cols="4">
                                 <group string="Detalles de Pago">
                                     <field name="is_colombia"  invisible="1"/>
@@ -218,8 +220,8 @@
                             <group cols="4">
                                 
                                 <group  string="Detalles de Nota debito" >
-                                <field name="tipoc_o_d" invisible='1'/>
-                                <field name="is_colombia"  invisible="1"/>
+                                    <field name="tipoc_o_d" invisible='1'/>
+                                    <field name="is_colombia"  invisible="1"/>
                                 <!-- attrs="{'invisible':[ ('tipoc_o_d','!=','Debito')]}" -->
                                     <field name="nota_debito" /> 
                                     <field name="factura" />                                   
@@ -247,9 +249,9 @@
                 </button>    --> 
                 <field name="is_colombia"  invisible="1"/>
                 <button name="button_draft" position="before"> 
-                	<button name="envio_directo" type="object" string="Generar Documento Electronico" attrs="{'invisible':['|',('state', 'not in', ('posted')),('estado_factura', 'in', ('Generada_correctamente')),('is_colombia', '=', False)]}" groups="base.group_user"/>
+                	<button name="envio_directo" type="object" string="Generar Documento Electronico" attrs="{'invisible':['|','|',('state', 'not in', ('posted')),('estado_factura', 'in', ('Generada_correctamente')),('is_colombia', '=', False)]}" groups="base.group_user"/>
                 	<button name="imprimir" type="object" string="Imprimir Documento Electronico" 
-                    attrs="{'invisible':['|',('state', 'not in', ('posted')),('estado_factura', 'not in', ('Generada_correctamente'))]}" groups="base.group_user"/>
+                    attrs="{'invisible':['|','|',('state', 'not in', ('posted')),('estado_factura', 'not in', ('Generada_correctamente'),('is_colombia', '=', False))]}" groups="base.group_user"/>
                   
                 </button>     
             </field>
