@@ -21,6 +21,7 @@
 					<field name="code_refund"/>
 					<field name="number_refund_from"/>
 					<field name="number_refund_to"/>
+					<field name="resolucion_refund"/>
 					<field name="secure_sequence_id"  />
 				</field>
 			</field>

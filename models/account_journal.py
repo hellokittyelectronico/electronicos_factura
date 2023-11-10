@@ -22,8 +22,8 @@ class AccountJournal(models.Model):
     )
     number_refund_from = fields.Integer('inicio refund', required=True)
     number_refund_to = fields.Integer('fin refund', required=True)
+    resolucion_refund = fields.Integer('Resolucion refund', required=True)
     
-
 
 
 # class AccountJournal_2(models.Model):

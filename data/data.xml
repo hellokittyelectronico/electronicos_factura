@@ -650,4 +650,12 @@
         <field name="campo_tecnico">self.partner_id.zip</field>
         <field name="detalle">Fin numeracion refund</field>
     </record>
+    <record id="facturand1" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">resolucion_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.resolucion_refund</field>
+        <field name="detalle">resolucion numeracion refund</field>
+    </record>
 </odoo>
