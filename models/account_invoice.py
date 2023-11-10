@@ -46,36 +46,36 @@ class AccountMove(models.Model):
     )
     #forma_pago = fields.Selection(
     tipo_pago = fields.Selection(    
-        selection=[#('1', '1 - Instrumento no definido'), 
-                   #('2', '2 - Crédito ACH'), 
-                   #('3', '3 - Débito ACH'),
-                   #('4', '4 - Reversión débito de demanda ACH'), 
-                   #('5', '5 - Reversión crédito de demanda ACH'),
-                   #('6', '6 - Crédito de demanda ACH'), 
-                   #('7', '7 - Débito de demanda ACH'), 
-                   #('8', '8 - Mantener'), 
-                   #('9', '9 - Clearing Nacional o Regional'), 
+        selection=[('1', '1 - Instrumento no definido'), 
+                   ('2', '2 - Crédito ACH'), 
+                   ('3', '3 - Débito ACH'),
+                   ('4', '4 - Reversión débito de demanda ACH'), 
+                   ('5', '5 - Reversión crédito de demanda ACH'),
+                   ('6', '6 - Crédito de demanda ACH'), 
+                   ('7', '7 - Débito de demanda ACH'), 
+                   ('8', '8 - Mantener'), 
+                   ('9', '9 - Clearing Nacional o Regional'), 
                    ('10', '10 - Efectivo'), 
-                   #('11', '11 - Reversión Crédito Ahorro'), 
-                   #('12', '12 - Reversión Débito Ahorro'), 
-                   #('13', '13 - Crédito Ahorro'), 
-                   #('14', '14 - Débito Ahorro'), 
-                   #('15', '15 - Bookentry Crédito'), 
-                   #('16', '16 - Bookentry Débito'), 
-                   #('17', '17 - Concentración de la demanda en efectivo /Desembolso Crédito (CCD)'), 
-                   #('18', '18 - Concentración de la demanda en efectivo / Desembolso (CCD) débito'),
-                   #('19', '19 - Crédito Pago negocio corporativo (CTP)'), 
+                   ('11', '11 - Reversión Crédito Ahorro'), 
+                   ('12', '12 - Reversión Débito Ahorro'), 
+                   ('13', '13 - Crédito Ahorro'), 
+                   ('14', '14 - Débito Ahorro'), 
+                   ('15', '15 - Bookentry Crédito'), 
+                   ('16', '16 - Bookentry Débito'), 
+                   ('17', '17 - Concentración de la demanda en efectivo /Desembolso Crédito (CCD)'), 
+                   ('18', '18 - Concentración de la demanda en efectivo / Desembolso (CCD) débito'),
+                   ('19', '19 - Crédito Pago negocio corporativo (CTP)'), 
                    ('20', '20 - Cheque'), 
-                   #('21', '21 - Poyecto bancario'), 
-                   #('22', '22 - Proyecto bancario certificado'), 
-                   #('23', '23 - Cheque bancario'), 
-                   #('24', '24 - Nota cambiaria esperando aceptación'), 
-                   #('25', '25 - Cheque certificado'), 
-                   #('26', '26 - Cheque Local'), 
-                   #('27', '27 - Débito Pago Neogcio Corporativo (CTP)'), 
-                   #('28', '28 - Crédito Negocio Intercambio Corporativo (CTX)'), 
-                   #('29', '29 - Débito Negocio Intercambio Corporativo (CTX)'), 
-                   #('30', '30 - Transferecia Crédito'), 
+                   ('21', '21 - Poyecto bancario'), 
+                   ('22', '22 - Proyecto bancario certificado'), 
+                   ('23', '23 - Cheque bancario'), 
+                   ('24', '24 - Nota cambiaria esperando aceptación'), 
+                   ('25', '25 - Cheque certificado'), 
+                   ('26', '26 - Cheque Local'), 
+                   ('27', '27 - Débito Pago Neogcio Corporativo (CTP)'), 
+                   ('28', '28 - Crédito Negocio Intercambio Corporativo (CTX)'), 
+                   ('29', '29 - Débito Negocio Intercambio Corporativo (CTX)'), 
+                   ('30', '30 - Transferecia Crédito'), 
                    ('42', '42 - Consignación bancaria'), 
                    ('ZZZ', 'ZZZ - Acuerdo mutuo'),],
         string=_('Tipo de pago'), default='10'
@@ -149,6 +149,22 @@ class AccountMove(models.Model):
 
     calidades_atributos = fields.Many2many("account.calidadess")
     usuario_aduanero = fields.Many2many("account.aduaneros")    
+    country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
+    
+    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
+
+    @api.depends('country_id')
+    def _compute_is_colombia(self):
+        for record in self:
+            record.is_colombia = record.country_id.code == 'CO'
+
+    @api.depends('country_id')
+    def _compute_pais(self):
+        for record in self:
+            record.country_id = record.company_id.country_id.id
+
+
+
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
         account_id = False
@@ -795,6 +811,7 @@ class AccountMove(models.Model):
             raise Warning(result)
 
 
+
 class calidades(models.Model):
     _name = 'account.calidadess'
     
@@ -832,7 +849,19 @@ class AccountMoveLine(models.Model):
 
     periodo_fecha = fields.Date("Fecha periodo", required=True, default=fields.Date.context_today)
     periodo_codigo = fields.Selection(selection=[('1', 'Por operación'),('2', 'Acumulado Semanal'),],string=_('Periodo'), required=True,default='1')
+    country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
+    
+    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
 
+    @api.depends('country_id')
+    def _compute_is_colombia(self):
+        for record in self:
+            record.is_colombia = record.country_id.code == 'CO'
+
+    @api.depends('country_id')
+    def _compute_pais(self):
+        for record in self:
+            record.country_id = record.company_id.country_id.id
 
 
 # class AccountMoveLine(models.Model):

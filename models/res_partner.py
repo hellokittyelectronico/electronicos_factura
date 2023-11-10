@@ -94,4 +94,9 @@ class partner_fact(models.Model):
     usuario_aduanero = fields.Many2many("account.aduaneros")
     tipo_contribuyente = fields.Selection([('1','Persona juridica'),('2','Persona natural')],'Tipo de contribuyente')
     tipo_regimen = fields.Selection([('0','Simplificado'),('2','Comun')],'Tipo de Regimen')
+    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
 
+    @api.depends('country_id')
+    def _compute_is_colombia(self):
+        for record in self:
+            record.is_colombia = record.country_id.code == 'CO'

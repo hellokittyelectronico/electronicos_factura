@@ -7,7 +7,8 @@
         <field name="inherit_id" ref="account.view_out_invoice_tree" />
         <field name="arch" type="xml">
             <field name="state" position="before">
-            	<field name="estado_factura" string="Firmado"/>
+                <field name="is_colombia"  invisible="1"/>
+            	<field name="estado_factura" string="Firmado" attrs="{'invisible':[('is_colombia', '=', False)]}"/>
             </field>    
         </field>
     </record>
@@ -18,14 +19,15 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
-                <page name="info_cdfi" string="Factura electronica" >
+                <page name="info_cdfi" string="Factura electronica" > 
+                    <!-- attrs="{'invisible':[('is_colombia', '=', False)]}" -->
                 <group cols="4">
                     <field name="tipo_pago" string="Tipo de Pago" />
                     <field name="metodo_pago" string="Método de pago" />
                     <field name="tipo_factura" string="Tipo de Factura" />
                     <field name="correo_factura" />
                     <field name="regimen_fiscal" />
-                    
+                    <field name="is_colombia"  invisible="1"/>
                     <!-- <field name="tipo_documento_plataforma" />
                     <field name="numero_plataforma" />
                     <field name="dv_plataforma" /> -->
@@ -66,6 +68,7 @@
                 <attribute name="attrs">{'required':[('is_company','=',True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='website']" position="after">
+                <!-- attrs="{'invisible':[('is_colombia', '=', False)]}" -->
                 <field name="tipo_contribuyente" string="Tipo de Contribuyente" />
                 <field name="tipo_regimen" string="Tipo de Régimen" />   
                 <field name="ciiu_id"/>
@@ -81,21 +84,23 @@
             <field name="arch" type="xml">
             <!-- page[0]/tree/ -->
                 <xpath expr="//field[@name='quantity']" position="after">
+                    <field name="is_colombia"  invisible="1"/>
                 <!-- attrs="{'invisible':[('tipo_documento','!=','documento_soporte')]}" -->
-                    <field name="periodo_fecha" string="Fecha" />
-                    <field name="periodo_codigo" string="Código" />
+                    <field name="periodo_fecha" string="Fecha" attrs="{'invisible':[('is_colombia', '=', False)]}" />
+                    <field name="periodo_codigo" string="Código" attrs="{'invisible':[('is_colombia', '=', False)]}"/>
                 </xpath> 
                 
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="after">
                 <!-- attrs="{'invisible':[('tipo_documento','!=','documento_soporte')]}" -->
-                    <field name="periodo_fecha" string="Fecha" invisible="1"/>
-                    <field name="periodo_codigo" string="Código" invisible="1" />
+                    <field name="periodo_fecha" string="Fecha" invisible="1" attrs="{'invisible':[('is_colombia', '=', False)]}"/>
+                    <field name="periodo_codigo" string="Código" invisible="1" attrs="{'invisible':[('is_colombia', '=', False)]}"/>
                 </xpath> 
                 
                 <xpath expr="//notebook" position="inside">
                 <!-- attrs="{'invisible':['|', ('type','!=','out_invoice'),('tipoc_o_d','=','Debito')]}" -->
-                    <page name="info_cdfi" string="Documento soporte electronico" attrs="{'invisible':[('tipo_documento','!=','documento_soporte')]}">
+                    <page name="info_cdfi" string="Documento soporte electronico" attrs="{'invisible':['|',('tipo_documento','!=','documento_soporte'),('is_colombia', '=', False)]}">
                             <group cols="4">
+                                <field name="is_colombia"  invisible="1"/>
                                 <group string="Detalles de Pago">
                                 <field name="tipo_documento" invisible='1'/>
                                 <field name="tipoc_o_d" invisible='1'/>
@@ -108,7 +113,7 @@
                                     <field name="factura" /> 
                                 </group> -->
                                 <group  string="Detalles de Documento Electronico" >
-                                	<field name="estado_factura"/>
+                                	<field name="estado_factura" />
                                 	<field name="fecha_factura"/>
                                     <field name="xml_invoice_link"/>
                                     <field name="codigo_qr"/>
@@ -125,8 +130,9 @@
                                 </group>-->
                             </group>
                     </page>
-                    <page name="info_cdfi" string="Nota Crédito doc soporte" attrs="{'invisible':[('tipo_documento','!=','Nota Credito Doc soporte')]}">
+                    <page name="info_cdfi" string="Nota Crédito doc soporte" attrs="{'invisible':['|',('tipo_documento','!=','Nota Credito Doc soporte'),('is_colombia', '=', False)]}">
                             <group cols="4">
+                                <field name="is_colombia"  invisible="1"/>
                                 <group  string="Detalles de Nota Crédito" >
                                     <field name="nota_credito"/>
                                     <field name="factura"/>
@@ -143,8 +149,8 @@
                                     <field name="factura" /> 
                                 </group> -->
                                 <group  string="Detalles de Documento Electronico" >
-                                	<field name="estado_factura"/>
-                                	<field name="fecha_factura"/>
+                                	<field name="estado_factura" readonly="1"/>
+                                	<field name="fecha_factura" readonly="1"/>
                                     <field name="xml_invoice_link"/>
                                     <field name="codigo_qr"/>
                                 	<field name="cufe"/>
@@ -160,9 +166,10 @@
                                 </group>-->
                             </group>
                     </page>
-                    <page name="info_cdfi" string="Factura electronica" attrs="{'invisible':[('tipo_documento','!=','factura')]}">
+                    <page name="info_cdfi" string="Factura electronica" attrs="{'invisible':[('tipo_documento','!=','factura'),('is_colombia', '=', False)]}">
                             <group cols="4">
                                 <group string="Detalles de Pago">
+                                    <field name="is_colombia"  invisible="1"/>
                                     <field name="tipoc_o_d" invisible='1'/>
                                 	<field name="tipo_pago"/>
                                 	<field name="methodo_pago"/>
@@ -173,8 +180,8 @@
                                     <field name="factura" /> 
                                 </group> -->
                                 <group  string="Detalles de Factura" >
-                                	<field name="estado_factura"/>
-                                	<field name="fecha_factura"/>
+                                	<field name="estado_factura" readonly="1"/>
+                                	<field name="fecha_factura" readonly="1"/>
                                     <field name="xml_invoice_link"/>
                                     <field name="codigo_qr"/>
                                 	<field name="cufe"/>
@@ -190,15 +197,16 @@
                                 </group>-->
                             </group>
                     </page>
-                <page name="info_cdfi" string="Nota Crédito electronica" attrs="{'invisible':[('tipo_documento','!=','Nota Credito')]}">
+                <page name="info_cdfi" string="Nota Crédito electronica" attrs="{'invisible':['|',('tipo_documento','!=','Nota Credito'),('is_colombia', '=', False)]}">
                             <group cols="4">
                                 <group  string="Detalles de Nota Crédito" >
+                                    <field name="is_colombia"  invisible="1"/>
                                     <field name="nota_credito"/>
                                     <field name="factura"/>
                                 </group>
 
                                 <group  string="Detalles de Factura" >
-                                	<field name="estado_factura"/>
+                                	<field name="estado_factura" readonly="1"/>
                                 	<field name="fecha_factura"/>
                                     <field name="codigo_qr"/>
                                 	<field name="cufe"/>
@@ -208,18 +216,19 @@
                             </group>
                 </page>
 
-                <page name="info_cdfi" string="Nota Debito electronica" attrs="{'invisible':[('tipo_documento','!=','nota_debito_factura')]}">
+                <page name="info_cdfi" string="Nota Debito electronica" attrs="{'invisible':['|',('tipo_documento','!=','nota_debito_factura'),('is_colombia', '=', False)]}">
                             <group cols="4">
                                 
                                 <group  string="Detalles de Nota debito" >
-                                <field name="tipoc_o_d" invisible='1'/>
+                                    <field name="tipoc_o_d" invisible='1'/>
+                                    <field name="is_colombia"  invisible="1"/>
                                 <!-- attrs="{'invisible':[ ('tipoc_o_d','!=','Debito')]}" -->
                                     <field name="nota_debito" /> 
                                     <field name="factura" />                                   
                                 </group>
 
                                 <group  string="Detalles de Factura" >
-                                	<field name="estado_factura"/>
+                                	<field name="estado_factura" readonly="1"/>
                                 	<field name="fecha_factura"/>
                                     <field name="codigo_qr"/>
                                 	<field name="cufe"/>
@@ -238,11 +247,12 @@
                  <!-- <button name="action_invoice_sent" position="before">
                 	<button name="action_invoice_sent" type="object" string="Enviar por correo-e" attrs="{'invisible':[('state', 'not in', ('cancel'))]}" groups="base.group_user"/>
                 </button>    --> 
+                <field name="is_colombia"  invisible="1"/>
                 <button name="button_draft" position="before"> 
-                	<button name="envio_directo" type="object" string="Generar Documento Electronico" attrs="{'invisible':['|',('state', 'not in', ('posted')),('estado_factura', 'in', ('Generada_correctamente'))]}" groups="base.group_user"/>
+                	<button name="envio_directo" type="object" string="Generar Documento Electronico" attrs="{'invisible':['|','|',('state', 'not in', ('posted')),('estado_factura', 'in', ('Generada_correctamente')),('is_colombia', '=', False)]}" groups="base.group_user"/>
                 	<button name="imprimir" type="object" string="Imprimir Documento Electronico" 
-                    attrs="{'invisible':['|',('state', 'not in', ('posted')),('estado_factura', 'not in', ('Generada_correctamente'))]}" groups="base.group_user"/>
-                  
+                    attrs="{'invisible': ['|', '|', ('state', 'not in', ['posted']), ('estado_factura', 'not in', ['Generada_correctamente']), ('is_colombia', '=', False)]}" groups="base.group_user"/>
+                     <!-- attrs="{'invisible':['|','|',('state', 'not in', ('posted')),('estado_factura', 'not in', ('Generada_correctamente'),('is_colombia', '=', False))]}" -->
                 </button>     
             </field>
         </record> 
@@ -293,6 +303,7 @@
                 <tree>
                     <field name="name" />
                     <field name="company_id" />
+                    <field name="country_id" />
                     <field name="diario" />
                     <field name="tipo_factura" />
                 </tree>

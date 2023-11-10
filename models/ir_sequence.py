@@ -54,6 +54,19 @@ class IrSequence(models.Model):
         'remaining_numbers': 400,
         'remaining_days': 30,
     }
+    country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
+    
+    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
+
+    @api.depends('country_id')
+    def _compute_is_colombia(self):
+        for record in self:
+            record.is_colombia = record.country_id.code == 'CO'
+
+    @api.depends('country_id')
+    def _compute_pais(self):
+        for record in self:
+            record.country_id = record.company_id.country_id.id
 
     @api.model
     def check_active_resolution(self, sequence_id):
