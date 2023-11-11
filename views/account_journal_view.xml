@@ -20,7 +20,6 @@
 				<field name="default_account_id" position="after">
 					<field name="code_refund"/>
 					
-					<field name="resolucion_refund"/>
 					<field name="secure_sequence_id"  />
 					<field name="code_refund" attrs="{'invisible':[('is_colombia', '=', False)]}"/>
 					<field name="number_refund_from" attrs="{'invisible':[('is_colombia', '=', False)]}"/>

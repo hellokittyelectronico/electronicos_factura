@@ -22,7 +22,7 @@ class AccountJournal(models.Model):
     )
     number_refund_from = fields.Integer('inicio refund', required=True)
     number_refund_to = fields.Integer('fin refund', required=True)
-    resolucion_refund = fields.Integer('Resolucion refund', required=True)
+    resolucion_refund = fields.Char('Resolucion refund', required=True)
     country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
     
     is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
