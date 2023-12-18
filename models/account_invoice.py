@@ -590,6 +590,8 @@ class AccountMove(models.Model):
                 print("result")
                 print(result)
                 return result
+        else:
+            pass
         #         if "error_d" in final:
         #             if "transactionID" in final:
         #                 print("final")
@@ -646,8 +648,12 @@ class AccountMove(models.Model):
                     print(prefijo)
                     send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":self.tipo_documento}
                     cufe = self.pedircufe(send,urlini)
-                    print(cufe)
-                    self.factura.write({"cufe":cufe['cufe']})
+                    if "cufe" in cufe:
+                        print(cufe)
+                        self.factura.write({"cufe":cufe['cufe']})
+                    else:
+                        final_text = cufe
+                        return self.env['wk.wizard.message'].genrated_message(final_text['error'],final_text['titulo'] ,final_text['link'])
                     # return
                     #self.write({"cufe":})
             send,error = invoice.to_json()
