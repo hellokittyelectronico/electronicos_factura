@@ -400,18 +400,18 @@
     </record>
      <record id="facturan0b48" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
-        <field name="name">resolucion_refund fecha_desde</field>
+        <field name="name">date_from_refund_number</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
-        <field name="campo_tecnico"></field>
+        <field name="campo_tecnico">self.journal_id.refund_fecha_desde</field>
         <field name="detalle">resolucion refund fecha desde</field>
     </record>
      <record id="facturan0b49" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
-        <field name="name">resolucion_refund_fecha_hasta</field>
+        <field name="name">date_to_refund_number</field>
         <field name="categoria">factura</field>
         <field name="obligatorio">false</field>
-        <field name="campo_tecnico"></field>
+        <field name="campo_tecnico">self.journal_id.refund_fecha_hasta</field>
         <field name="detalle">resolucion refund fecha hasta</field>
     </record>
      <record id="facturan0b50" model="base_electronicos.line">
@@ -649,5 +649,13 @@
         <field name="obligatorio">false</field>
         <field name="campo_tecnico">self.partner_id.zip</field>
         <field name="detalle">Fin numeracion refund</field>
+    </record>
+    <record id="facturand1" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">resolucion_refund</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.journal_id.resolucion_refund</field>
+        <field name="detalle">resolucion numeracion refund</field>
     </record>
 </odoo>
