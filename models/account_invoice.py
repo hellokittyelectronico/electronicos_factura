@@ -844,8 +844,7 @@ class taxdemedida(models.Model):
         selection=[('1', 'IVA'), 
                    ('2', 'Impuesto al consumo'),
                    ('3', 'ICA'),
-                   ('4', 'Impuesto nacional al consumo'),
-                   ('ZZ', 'Impuesto licores'),],
+                   ('4', 'Impuesto nacional al consumo'),],
         string=_('Tipo de Impuesto'),
     )
 
