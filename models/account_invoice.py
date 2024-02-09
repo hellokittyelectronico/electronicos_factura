@@ -346,8 +346,8 @@ class AccountMove(models.Model):
 
     #@api.multi
     # @api.onchange('payment_term_id')
-    # def _get_metodo_pago(self):
-    #     return
+    def _get_metodo_pago(self):
+        return True
         # if self.payment_term_id:
         #     if self.payment_term_id.methodo_pago == 'PPD':
         #         values = {
