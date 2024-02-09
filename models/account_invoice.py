@@ -345,9 +345,9 @@ class AccountMove(models.Model):
         return amount_to_text_es_MX.get_amount_to_text(self, amount_total, 'es_cheque', self.currency_id.name)
 
     #@api.multi
-    @api.onchange('payment_term_id')
-    def _get_metodo_pago(self):
-        return
+    # @api.onchange('payment_term_id')
+    # def _get_metodo_pago(self):
+    #     return
         # if self.payment_term_id:
         #     if self.payment_term_id.methodo_pago == 'PPD':
         #         values = {
