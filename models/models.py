@@ -3,7 +3,7 @@ from odoo import models, fields, modules,tools , api,_
 import os
 import requests
 import json 
-from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError, Warning
+from odoo.exceptions import AccessError, UserError,  ValidationError
 import babel
 
 import time
