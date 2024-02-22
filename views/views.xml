@@ -314,7 +314,7 @@
           <field name="arch" type="xml">
               <field name="name" position="after">
                   <!-- attrs="{'invisible':[('name','!=','Factura electrónica')]}" -->
-                  <field name="general_factura" string="Datos Factura" invisible = "name != 'Factura electrónica'">
+                  <field name="general_factura" string="Datos Factura" invisible = "name != 'Factura'">
                   <tree>
                       <field name="name" />
                       <field name="company_id" />
