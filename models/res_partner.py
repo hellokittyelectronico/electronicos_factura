@@ -99,4 +99,4 @@ class partner_fact(models.Model):
     @api.depends('country_id')
     def _compute_is_colombia(self):
         for record in self:
-            record.is_colombia = record.country_id.code == 'CO'
+            record.is_colombia = record.company_id.country_id.code == 'CO'
