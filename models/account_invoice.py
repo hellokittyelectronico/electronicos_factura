@@ -11,6 +11,8 @@ import time
 from dateutil import relativedelta
 from datetime import datetime, timedelta
 from datetime import time as datetime_time
+import logging
+_logger = logging.getLogger(__name__)
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
@@ -253,6 +255,10 @@ class AccountMove(models.Model):
         print(self)
         print(self[0].move_type)
         # print(self[1].move_type)
+        _logger.info(self[0].move_type)
+        _logger.info(documento)
+        _logger.info(documento.tipo_factura)
+        _logger.info(self.journal_id[0].id)
         if documento:
             if self[0].move_type == "out_invoice" and documento.tipo_factura == "factura":
                 self[0].tipo_documento = documento.tipo_factura
@@ -627,6 +633,8 @@ class AccountMove(models.Model):
             # self.FechaGen = str(now2.date())
             # self.HoraGen = str(current_time)
             urlini = "https://odoo15.navegasoft.com/admonclientes/objects/"
+            revizar = invoice.documento
+            _logger.info(self.tipo_documento)
             if not self.factura.cufe and (self.tipo_documento == "Nota Credito" or self.tipo_documento == "Nota Credito Doc soporte"):
                 if not self.factura:
                     pass
