@@ -633,8 +633,25 @@ class AccountMove(models.Model):
             # self.FechaGen = str(now2.date())
             # self.HoraGen = str(current_time)
             urlini = "https://odoo15.navegasoft.com/admonclientes/objects/"
-            revizar = invoice.documento
-            _logger.info(self.tipo_documento)
+            revizar = invoice.documento()
+            _logger.info(invoice.tipo_documento)
+            # _logger.info(invoice.move_type)
+            # _logger.info(invoice)
+            # _logger.info(invoice.tipo_factura)
+            # _logger.info(self.journal_id[0].id)
+            
+            # if invoice:
+            #     if invoice.move_type == "out_invoice" and invoice.tipo_factura == "factura":
+            #         invoice.tipo_documento = invoice.tipo_factura
+            #     elif invoice.move_type == "out_refund" and invoice.tipo_factura == "factura":
+            #         invoice.tipo_documento = "Nota Credito"
+            #     elif invoice.move_type == "in_invoice" and invoice.tipo_factura == "documento_soporte":
+            #         invoice.tipo_documento = invoice.tipo_factura
+            #     elif invoice.move_type == "in_refund" and invoice.tipo_factura == "documento_soporte":
+            #         invoice.tipo_documento = "Nota Credito Doc soporte"
+            #     elif invoice.move_type == "out_invoice" and invoice.tipo_factura == "nota_debito_factura":
+            #         invoice.tipo_documento = invoice.tipo_factura
+
             if not self.factura.cufe and (self.tipo_documento == "Nota Credito" or self.tipo_documento == "Nota Credito Doc soporte"):
                 if not self.factura:
                     pass
