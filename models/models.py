@@ -31,7 +31,19 @@ class datos_generales(models.Model):
     )
     password = fields.Char('password')
     general_factura = fields.Many2one('base_electronicos.tabla', string='Asignar a',ondelete='restrict', index=True)
-    
+    proveedor_tecnologico = fields.Selection(
+        [('Navegasoft', 'Navegasoft'),
+         ('Facturatech', 'Facturatech'),
+         ('Dataico', 'Dataico'),
+         ('Afacturar', 'Afacturar'),
+         ('Pagopass', 'Pagopass'),
+         ('Propio', 'Propio'),
+         ('Otro', 'Otro'),],
+        default='Navegasoft',
+        string='Proveedor Técnologico',
+        help="Con quien se envia el documento electronico."
+    )
+    otro_proveedor_tecnologico = fields.Char('Otro Proveedor Tecnologico')
     country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
     
     is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)

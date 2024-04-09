@@ -5,7 +5,7 @@
         <field name="id">2</field>
         <field name="name">Factura electrónica</field>
     </record>
-
+    <!-- url y endpoint -->
     <record id="facturan0b1" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">nit_compania</field>

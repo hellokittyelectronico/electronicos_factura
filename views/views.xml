@@ -321,6 +321,7 @@
                       <field name="country_id" />
                       <field name="diario" />
                       <field name="tipo_factura" />
+
                   </tree>
                   <form>
                       <group>
@@ -338,7 +339,33 @@
           </field>
       </record>
   
+      <record id="view_tabla_form_tree" model="ir.ui.view">
+        <field name="name">base_electronicos.tabla.form</field>
+        <field name="model">base_electronicos.tabla</field>
+        <field name="inherit_id" ref="electronicos_factura.view_tabla_form" />
+        <field name="arch" type="xml">
+            <field name="tipo_factura['0']" position="after">
+                <!-- attrs="{'invisible':[('name','!=','Factura electrónica')]}" -->                    
+                    <field name="proveedor_tecnologico" />
+
+             </field>   
+        </field>  
+       
+    </record>
   
+    <record id="view_tabla_form_form" model="ir.ui.view">
+        <field name="name">base_electronicos.tabla.form</field>
+        <field name="model">base_electronicos.tabla</field>
+        <field name="inherit_id" ref="electronicos_factura.view_tabla_form" />
+        <field name="arch" type="xml">
+            <field name="tipo_factura['1']" position="after">
+                <!-- attrs="{'invisible':[('name','!=','Factura electrónica')]}" -->                    
+                    <field name="proveedor_tecnologico" />
+                    <field name="otro_proveedor_tecnologico" />
+             </field>   
+        </field>  
+       
+    </record>
   
       <record id="view_tax_mod" model="ir.ui.view" >
       <field name="name">form codigo tax</field>
