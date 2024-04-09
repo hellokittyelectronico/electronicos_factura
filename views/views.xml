@@ -101,7 +101,6 @@
                   <!-- attrs="{'invisible':['|',('tipo_documento','!=','documento_soporte'),('is_colombia', '=', False)]}"> -->
                       <page name="info_cdfi" string="Documento soporte electronico" 
                       invisible = "tipo_documento != 'documento_soporte' or is_colombia == False">
-                      
                               <group cols="4">
                                   <field name="is_colombia"  invisible="1"/>
                                   <group string="Detalles de Pago">
@@ -116,6 +115,9 @@
                                       <field name="factura" /> 
                                   </group> -->
                                   <group  string="Detalles de Documento Electronico" >
+                                    
+                                    <field name="proveedor_tecnologico" readonly="1"/>
+                                    <field name="otro_proveedor_tecnologico" readonly="1"/>
                                       <field name="estado_factura" />
                                       <field name="fecha_factura"/>
                                       <field name="xml_invoice_link"/>
@@ -153,6 +155,8 @@
                                       <field name="factura" /> 
                                   </group> -->
                                   <group  string="Detalles de Documento Electronico" >
+                                    <field name="proveedor_tecnologico" readonly="1"/>
+                                      <field name="otro_proveedor_tecnologico" readonly="1"/>
                                       <field name="estado_factura" readonly="1"/>
                                       <field name="fecha_factura" readonly="1"/>
                                       <field name="xml_invoice_link"/>
@@ -185,6 +189,8 @@
                                       <field name="factura" /> 
                                   </group> -->
                                   <group  string="Detalles de Factura" >
+                                    <field name="proveedor_tecnologico" readonly="1"/>
+                                      <field name="otro_proveedor_tecnologico" readonly="1"/>
                                       <field name="estado_factura" readonly="1"/>
                                       <field name="fecha_factura" readonly="1"/>
                                       <field name="xml_invoice_link"/>
@@ -212,6 +218,8 @@
                                   </group>
   
                                   <group  string="Detalles de Factura" >
+                                    <field name="proveedor_tecnologico" readonly="1"/>
+                                      <field name="otro_proveedor_tecnologico" readonly="1"/>
                                       <field name="estado_factura" readonly="1"/>
                                       <field name="fecha_factura"/>
                                       <field name="codigo_qr"/>
@@ -237,6 +245,8 @@
                                   </group>
   
                                   <group  string="Detalles de Factura" >
+                                    <field name="proveedor_tecnologico" readonly="1"/>
+                                      <field name="otro_proveedor_tecnologico" readonly="1"/>
                                       <field name="estado_factura" readonly="1"/>
                                       <field name="fecha_factura"/>
                                       <field name="codigo_qr"/>
@@ -314,24 +324,24 @@
           <field name="arch" type="xml">
               <field name="name" position="after">
                   <!-- attrs="{'invisible':[('name','!=','Factura electrónica')]}" -->
-                  <field name="general_factura" string="Datos Factura" invisible = "name != 'Factura'">
+                  <field name="general_factura" string="Datos Factura" invisible = "name != 'Factura electrónica'">
                   <tree>
                       <field name="name" />
                       <field name="company_id" />
                       <field name="country_id" />
                       <field name="diario" />
                       <field name="tipo_factura" />
-
+                      <field name="proveedor_tecnologico" />
                   </tree>
                   <form>
                       <group>
-                      <field name="name" />
-                      <field name="company_id" />
-                      <field name="diario" />
-                      <field name="tipo_factura" />
-                      <button name="documento" type="object" string="Cambiar el tipo a documentos" 
-                               groups="base.group_user"/>
-                      
+                        <field name="name" />
+                        <field name="company_id" />
+                        <field name="diario" />
+                        <field name="tipo_factura" />
+                        <button name="documento" type="object" string="Cambiar el tipo a documentos" groups="base.group_user"/>
+                        <field name="proveedor_tecnologico" />
+                        <field name="otro_proveedor_tecnologico" />
                       </group>
                   </form>
                </field>   
@@ -339,36 +349,7 @@
           </field>
       </record>
   
-      <record id="view_tabla_form_tree" model="ir.ui.view">
-        <field name="name">base_electronicos.tabla.form</field>
-        <field name="model">base_electronicos.tabla</field>
-        <field name="inherit_id" ref="electronicos_factura.view_tabla_form" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='general_factura']/tree" position="inside">
-            <!-- <field name="tipo_factura[0]" position="after"> -->
-                <!-- attrs="{'invisible':[('name','!=','Factura electrónica')]}" -->                    
-                    <field name="proveedor_tecnologico" />
-            </xpath>
-             <!-- </field>    -->
-        </field>  
-       
-    </record>
-  
-    <record id="view_tabla_form_form" model="ir.ui.view">
-        <field name="name">base_electronicos.tabla.form</field>
-        <field name="model">base_electronicos.tabla</field>
-        <field name="inherit_id" ref="electronicos_factura.view_tabla_form" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='general_factura']/form" position="inside">
-            <!-- <field name="tipo_factura[1]" position="after"> -->
-                <!-- attrs="{'invisible':[('name','!=','Factura electrónica')]}" -->                    
-                    <field name="proveedor_tecnologico" />
-                    <field name="otro_proveedor_tecnologico" />
-                </xpath>
-                <!-- </field>    -->
-        </field>  
-       
-    </record>
+      
   
       <record id="view_tax_mod" model="ir.ui.view" >
       <field name="name">form codigo tax</field>

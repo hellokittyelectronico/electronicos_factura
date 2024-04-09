@@ -155,6 +155,11 @@ class AccountMove(models.Model):
     
     is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
 
+    url = fields.Char(string="Url")
+    proveedor_tecnologico = fields.Char(string="Proveedor tecnologico")
+    otro_proveedor_tecnologico = fields.Char(string="Otro proveedor tecnologico")
+
+    
     @api.depends('country_id')
     def _compute_is_colombia(self):
         for record in self:
@@ -498,19 +503,20 @@ class AccountMove(models.Model):
         
         return invoice_lines,valorimpuestos,tax_grouped,rete_grouped
 
-    def to_json(self):
+    def to_json(self,valores):
         totalDays =100
         numero =1
         send = {}
-        valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
         response2={}
         valores_lineas = valores.mp_id
-        print("haber")
-        print(self.journal_id)
+        # print("haber")
+        # print(self.journal_id)
         documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
-        print(documento)
+        self.otro_proveedor_tecnologico = documento.otro_proveedor_tecnologico
+        self.proveedor_tecnologico = documento.proveedor_tecnologico
+        # print(documento)
         if documento:
-            print()
+            # print()
             # if self.tipo_factura=='4':
             #     send = {'tipo_documento':'extranjero'}
             # else:
@@ -520,7 +526,7 @@ class AccountMove(models.Model):
             return self.env['wk.wizard.message'].genrated_message("El diario no esta configurado en la tabla de envio "," Error en la configuracion","https://navegasoft.com") ,True
         for linea in valores_lineas:
             #buscar en el comprobante el codigo
-            print(linea.name)
+            # print(linea.name)
             try:
                 #search de company_id in the field
                 if linea.campo_tecnico:
@@ -531,9 +537,9 @@ class AccountMove(models.Model):
                     #         self.write({'rechazo':"El campo esta en blanco "+linea.campo_tecnico+ " " +linea.name})
                     #         return self.env['wk.wizard.message'].genrated_message("El campo tecnico esta en blanco "+linea.campo_tecnico," Error en el campo"+linea.name,"https://navegasoft.com") ,True
                     if linea.name.strip() == "fecha":
-                        print("imprimiendo fecha")
+                        # print("imprimiendo fecha")
                         fecha =str(self.date.strftime("%Y-%m-%d"))
-                        print(fecha)
+                        # print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
                         send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas(self.tipo_documento) #
@@ -565,7 +571,7 @@ class AccountMove(models.Model):
                 return self.env['wk.wizard.message'].genrated_message("El campo tecnico no existe "+linea.campo_tecnico,"Error en el campo"+linea.name,"https://navegasoft.com"),True
         if "id_plataforma" not in send:
             send['id_plataforma'] =self.company_id.partner_id.id_plataforma
-        return send,False
+        return url,send,False
         # print('send')
         # print(send)
                     #pass
@@ -620,6 +626,7 @@ class AccountMove(models.Model):
         #     raise Warning(result)
 
     #@api.multi
+    
     def envio_directo(self):
         import time
         for invoice in self:
@@ -632,26 +639,11 @@ class AccountMove(models.Model):
             # current_time = now2.strftime("%H:%M:%S")
             # self.FechaGen = str(now2.date())
             # self.HoraGen = str(current_time)
-            urlini = "https://odoo15.navegasoft.com/admonclientes/objects/"
+            valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
+            urlini = valores.url+'/objects/' #"https://odoo15.navegasoft.com/admonclientes"
             revizar = invoice.documento()
             _logger.info(invoice.tipo_documento)
-            # _logger.info(invoice.move_type)
-            # _logger.info(invoice)
-            # _logger.info(invoice.tipo_factura)
-            # _logger.info(self.journal_id[0].id)
             
-            # if invoice:
-            #     if invoice.move_type == "out_invoice" and invoice.tipo_factura == "factura":
-            #         invoice.tipo_documento = invoice.tipo_factura
-            #     elif invoice.move_type == "out_refund" and invoice.tipo_factura == "factura":
-            #         invoice.tipo_documento = "Nota Credito"
-            #     elif invoice.move_type == "in_invoice" and invoice.tipo_factura == "documento_soporte":
-            #         invoice.tipo_documento = invoice.tipo_factura
-            #     elif invoice.move_type == "in_refund" and invoice.tipo_factura == "documento_soporte":
-            #         invoice.tipo_documento = "Nota Credito Doc soporte"
-            #     elif invoice.move_type == "out_invoice" and invoice.tipo_factura == "nota_debito_factura":
-            #         invoice.tipo_documento = invoice.tipo_factura
-
             if not self.factura.cufe and (self.tipo_documento == "Nota Credito" or self.tipo_documento == "Nota Credito Doc soporte"):
                 if not self.factura:
                     pass
@@ -675,7 +667,7 @@ class AccountMove(models.Model):
                     self.factura.write({"cufe":cufe['cufe']})
                     # return
                     #self.write({"cufe":})
-            send,error = invoice.to_json()
+            send,error = invoice.to_json(valores)
             if error:
                 return send
             else: 
@@ -732,8 +724,8 @@ class AccountMove(models.Model):
                 lon_prefix = len(self.journal_id.secure_sequence_id.prefix) 
                 prefi = self.journal_id.secure_sequence_id.prefix #self.number[0:long_total-len(number)]
             number = name[lon_prefix:long_total]
-        
-        urlini = "https://odoo15.navegasoft.com/admonclientes/status/"
+        valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
+        urlini = valores.url+'/status/' #"https://odoo15.navegasoft.com/admonclientes/objects/"
         headers = {'content-type': 'application/json'}
         send = {"id_plataforma":self.company_id.partner_id.id_plataforma,'password': self.company_id.partner_id.password,
         "transaccionID":self.transaccionID,"prefix":prefi,
