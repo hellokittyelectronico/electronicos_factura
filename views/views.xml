@@ -344,7 +344,7 @@
         <field name="model">base_electronicos.tabla</field>
         <field name="inherit_id" ref="electronicos_factura.view_tabla_form" />
         <field name="arch" type="xml">
-            <xpath expr="/tree/field[@name='tipo_factura']" position="after">
+            <xpath expr="//field[@name='general_factura']/tree" position="inside">
             <!-- <field name="tipo_factura[0]" position="after"> -->
                 <!-- attrs="{'invisible':[('name','!=','Factura electrónica')]}" -->                    
                     <field name="proveedor_tecnologico" />
@@ -359,7 +359,7 @@
         <field name="model">base_electronicos.tabla</field>
         <field name="inherit_id" ref="electronicos_factura.view_tabla_form" />
         <field name="arch" type="xml">
-            <xpath expr="/form/field[@name='tipo_factura']" position="after">
+            <xpath expr="//field[@name='general_factura']/form" position="inside">
             <!-- <field name="tipo_factura[1]" position="after"> -->
                 <!-- attrs="{'invisible':[('name','!=','Factura electrónica')]}" -->                    
                     <field name="proveedor_tecnologico" />
