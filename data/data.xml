@@ -5,7 +5,7 @@
         <field name="id">2</field>
         <field name="name">Factura electrónica</field>
     </record>
-    <!-- url y endpoint -->
+    
     <record id="facturan0b1" model="base_electronicos.line">
         <field name="mp_id" ref="facturan0a"/>
         <field name="name">nit_compania</field>
@@ -658,4 +658,31 @@
         <field name="campo_tecnico">self.journal_id.resolucion_refund</field>
         <field name="detalle">resolucion numeracion refund</field>
     </record>
+
+<!-- url y endpoint -->
+    <record id="facturane1" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">url</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.url</field>
+        <field name="detalle">url</field>
+    </record>
+    <record id="facturane2" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">proveedor_tecnologico</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.proveedor_tecnologico</field>
+        <field name="detalle">proveedor tecnologico</field>
+    </record>
+    <record id="facturane3" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">otro_proveedor_tecnologico</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.otro_proveedor_tecnologico</field>
+        <field name="detalle">otro proveedor tecnologico</field>
+    </record>
+
 </odoo>
