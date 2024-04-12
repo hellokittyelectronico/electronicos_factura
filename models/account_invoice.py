@@ -571,7 +571,7 @@ class AccountMove(models.Model):
                 return self.env['wk.wizard.message'].genrated_message("El campo tecnico no existe "+linea.campo_tecnico,"Error en el campo"+linea.name,"https://navegasoft.com"),True
         if "id_plataforma" not in send:
             send['id_plataforma'] =self.company_id.partner_id.id_plataforma
-        return url,send,False
+        return send,False
         # print('send')
         # print(send)
                     #pass
