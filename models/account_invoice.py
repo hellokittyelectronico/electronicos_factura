@@ -706,7 +706,7 @@ class AccountMove(models.Model):
             print(name)
             #lista = re.findall("\d+", self.number)
             #number = lista[0]
-            if self.move_type == 'out_refund':
+            if self.move_type == 'out_refund' or self.move_type == 'in_refund':
                 lon_prefix = len(self.journal_id.code_refund)#refund_secure_sequence_id.prefix 
                 prefi = self.journal_id.code_refund #self.number[0:long_total-len(number)]
             else:
