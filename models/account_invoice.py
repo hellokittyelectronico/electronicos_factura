@@ -515,6 +515,7 @@ class AccountMove(models.Model):
         documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
         self.otro_proveedor_tecnologico = documento.otro_proveedor_tecnologico
         self.proveedor_tecnologico = documento.proveedor_tecnologico
+        self.sub_tipo_documento = documento.sub_tipo_documento
         # print(documento)
         if documento:
             # print()

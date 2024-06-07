@@ -44,6 +44,13 @@ class datos_generales(models.Model):
         help="Con quien se envia el documento electronico."
     )
     otro_proveedor_tecnologico = fields.Char('Otro Proveedor Tecnologico')
+    sub_tipo_documento = fields.Selection([
+        ('Factura Electronica', 'Factura Electronica'),
+        ('Nota_debito', 'Nota_debito'),
+        ('Nota_credito', 'Nota_credito'),
+        ('Documento_soporte', 'Documento_soporte'),
+        ('Pos', 'Pos'),
+    ], string='Tipo documento')
     country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
     
     is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
