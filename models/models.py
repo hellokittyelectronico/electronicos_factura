@@ -89,7 +89,13 @@ class base_electronicos(models.Model):
     _inherit = 'base_electronicos.tabla'
 
     general_factura = fields.One2many('electronicos_factura.datos_generales','general_factura', ondelete='cascade')
-
+    sub_tipo_documento = fields.Selection([
+        ('Factura Electronica', 'Factura Electronica'),
+        ('Nota_debito', 'Nota_debito'),
+        ('Nota_credito', 'Nota_credito'),
+        ('Documento_soporte', 'Documento_soporte'),
+        ('Pos', 'Pos'),
+    ], string='Sub Tipo documento')
 
 class partner_fact(models.Model):
     # _name = 'res.partner'
