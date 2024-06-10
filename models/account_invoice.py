@@ -98,7 +98,9 @@ class AccountMove(models.Model):
                    ('7', _('7- Generica con periodo de facturacion')),
                    ('8', _('8- Consorcio')),
                    ('9', _('9- Servicios AIU')),
-                   ('10', _('10- Estandar')),],
+                   ('10', _('10- Estandar')),
+                   ('11', _('11- Mandato')),
+                   ('14', '14 Notarios'),('15', '15 Compra DIvisas'),('16', '16 Venta Divisas'),],
         string=_('Tipo de factura'),
         default ='10'
     )
@@ -896,8 +898,8 @@ class Accountrefund(models.TransientModel):
                    ('2', '2 Anulación de factura electrónica'), 
                    ('3', '3 Rebaja total aplicada'),
                    ('4', '4 Descuento total aplicado'), 
-                   ('5', '5 Rescisión: nulidad por falta de requisitos'), 
-                   ('6', '6 Otros'), ],
+                   ('5', '5 Descuento comercial por pronto pago'), 
+                   ('6', '6 Descuento comercial por volumen de ventas'), ],
         string=_('Tipo de Nota credito'),
     )
 
