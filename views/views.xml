@@ -331,6 +331,7 @@
                       <field name="country_id" />
                       <field name="diario" />
                       <field name="tipo_factura" />
+                      <field name="sub_tipo_documento" />
                       <field name="proveedor_tecnologico" />
                   </tree>
                   <form>
@@ -339,6 +340,7 @@
                         <field name="company_id" />
                         <field name="diario" />
                         <field name="tipo_factura" />
+                        <field name="sub_tipo_documento" />
                         <button name="documento" type="object" string="Cambiar el tipo a documentos" groups="base.group_user"/>
                         <field name="proveedor_tecnologico" />
                         <field name="otro_proveedor_tecnologico" />

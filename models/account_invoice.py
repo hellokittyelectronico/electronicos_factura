@@ -149,6 +149,7 @@ class AccountMove(models.Model):
         ('Factura_Electronica', 'Factura Electronica'),
         ('nota_debito_factura', 'Nota_debito_factura'),
         ('Documento_soporte', 'Documento_soporte'),
+        ('Pos', 'Pos'),
     ], string='Tipo documento')
 
     calidades_atributos = fields.Many2many("account.calidadess")
@@ -516,13 +517,14 @@ class AccountMove(models.Model):
         documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
         self.otro_proveedor_tecnologico = documento.otro_proveedor_tecnologico
         self.proveedor_tecnologico = documento.proveedor_tecnologico
+        self.sub_tipo_documento = documento.sub_tipo_documento
         # print(documento)
         if documento:
             # print()
             # if self.tipo_factura=='4':
             #     send = {'tipo_documento':'extranjero'}
             # else:
-            send = {'tipo_documento':self.tipo_documento}
+            send = {'tipo_documento':self.tipo_documento,"sub_tipo_documento":self.sub_tipo_documento}
         else:
             self.write({'rechazo':"El diario no esta configurado en la tabla de envio"})
             return self.env['wk.wizard.message'].genrated_message("El diario no esta configurado en la tabla de envio "," Error en la configuracion","https://navegasoft.com") ,True
@@ -731,7 +733,7 @@ class AccountMove(models.Model):
         headers = {'content-type': 'application/json'}
         send = {"id_plataforma":self.company_id.partner_id.id_plataforma,'password': self.company_id.partner_id.password,
         "transaccionID":self.transaccionID,"prefix":prefi,
-        "number":number,'documento_electronico':"factura",'tipo_documento':self.tipo_documento}#"ambiente":self.ambiente,
+        "number":number,'documento_electronico':"factura",'tipo_documento':self.tipo_documento,"sub_tipo_documento":self.sub_tipo_documento}#"ambiente":self.ambiente,
         result = requests.post(urlini,headers=headers,data = json.dumps(send))
         #resultado = json.loads(result.text)
         #print(result.text)
