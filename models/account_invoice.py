@@ -173,7 +173,11 @@ class AccountMove(models.Model):
         for record in self:
             record.country_id = record.company_id.country_id.id
 
-
+    def generate_multiple_invoice(self):
+        for record in self._context.get('active_ids'):
+            if record:
+                invoice = self.env[self._context.get('active_model')].browse(record)
+                invoice.envio_directo()
 
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
