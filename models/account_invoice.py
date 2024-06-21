@@ -461,6 +461,7 @@ class AccountMove(models.Model):
                     'incluido': tax['price_include'],
                     'porcentaje': "{:.2f}".format(tax_id.amount),
                     'base': this_amount,
+                    'cantidad': line.quantity,
                     'amount': tax['amount']}
                     key = tax['id']
                     if key not in tax_grouped:
@@ -468,6 +469,7 @@ class AccountMove(models.Model):
                     else:
                         tax_grouped[key]['amount'] += val['amount']
                         tax_grouped[key]['base'] += this_amount
+                        tax_grouped[key]['cantidad'] += line.quantity
                 # for rete in self.line_ids:
                 if tax_id.rte_iva or tax_id.rte_fuente or tax_id.rte_ica:
                     key = tax['id']
