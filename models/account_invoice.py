@@ -461,7 +461,7 @@ class AccountMove(models.Model):
                     'incluido': tax['price_include'],
                     'porcentaje': "{:.2f}".format(tax_id.amount),
                     'base': this_amount,
-                    'cantidad': line.quantity,
+                    'cantidad': line.quantity, 
                     'amount': tax['amount']}
                     key = tax['id']
                     if key not in tax_grouped:
