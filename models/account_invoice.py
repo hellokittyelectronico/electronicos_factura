@@ -395,7 +395,7 @@ class AccountMove(models.Model):
             if estado_factura == 'factura_cancelada':
                 raise UserError(_('Error para timbrar factura, Factura ya generada y cancelada.'))
             self.fecha_factura= datetime.now()
-            values = invoice.to_json()
+            values = invoice.to_json88()
             url = "https://odoo15.navegasoft.com/admonclientes/objects/"
             response = requests.post(url , 
                                      auth=None,verify=False, data=json.dumps(values), 
@@ -421,7 +421,7 @@ class AccountMove(models.Model):
             invoice.message_post(body="CFDI emitido")
         return True
     
-    def veybuscalineas(self,tipo_documento):
+    def veybuscalineas3(self,tipo_documento):
         num = 0
         invoice_lines = []
         tax_grouped = {}
@@ -461,6 +461,7 @@ class AccountMove(models.Model):
                     'incluido': tax['price_include'],
                     'porcentaje': "{:.2f}".format(tax_id.amount),
                     'base': this_amount,
+                    'cantidad': line.quantity, 
                     'amount': tax['amount']}
                     key = tax['id']
                     if key not in tax_grouped:
@@ -468,6 +469,7 @@ class AccountMove(models.Model):
                     else:
                         tax_grouped[key]['amount'] += val['amount']
                         tax_grouped[key]['base'] += this_amount
+                        tax_grouped[key]['cantidad'] += line.quantity
                 # for rete in self.line_ids:
                 if tax_id.rte_iva or tax_id.rte_fuente or tax_id.rte_ica:
                     key = tax['id']
@@ -511,7 +513,7 @@ class AccountMove(models.Model):
         
         return invoice_lines,valorimpuestos,tax_grouped,rete_grouped
 
-    def to_json(self,valores):
+    def to_json88(self,valores):
         totalDays =100
         numero =1
         send = {}
@@ -551,7 +553,7 @@ class AccountMove(models.Model):
                         # print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
-                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas(self.tipo_documento) #
+                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas3(self.tipo_documento) #
                     elif linea.campo_tecnico.strip() == "totales":
                         send["valorsinimpuestos"] =self.amount_untaxed
                     elif linea.campo_tecnico.strip() == "valor_impuestos":
@@ -676,7 +678,7 @@ class AccountMove(models.Model):
                     self.factura.write({"cufe":cufe['cufe']})
                     # return
                     #self.write({"cufe":})
-            send,error = invoice.to_json(valores)
+            send,error = invoice.to_json88(valores)
             if error:
                 return send
             else: 
