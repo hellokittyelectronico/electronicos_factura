@@ -496,7 +496,7 @@ class AccountMove(models.Model):
             invoice_lines.append({'numero_linea':num,
                                 'product_id':line.product_id.id,
                                 'codigo':line.product_id.default_code,
-                                'configurable':line.product_id.configurable,
+                                'configurable':line.product_id.configurable if hasattr(line.product_id, 'configurable') else False,
                                 'cantidad': line.quantity,
                                 'valor_unitario': "{:.2f}".format(amounts['total_excluded']),
                                 'price': "{:.2f}".format(price),
