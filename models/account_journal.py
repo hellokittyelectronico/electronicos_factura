@@ -20,13 +20,13 @@ class AccountJournal(models.Model):
     invoice_comment = fields.Html(
         string="Invoice Comment"
     )
-    number_refund_from = fields.Integer('inicio refund', required=True)
-    number_refund_to = fields.Integer('fin refund', required=True)
-    resolucion_refund = fields.Char('Resolucion refund', required=True)
+    number_refund_from = fields.Integer('inicio refund')
+    number_refund_to = fields.Integer('fin refund')
+    resolucion_refund = fields.Char('Resolucion refund')
     country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
-    refund_fecha_desde = fields.Date('Fecha inicio refund', required=True)
-    refund_fecha_hasta = fields.Date('Fecha fin refund', required=True)
-    number_refund_to = fields.Integer('fin refund', required=True)
+    refund_fecha_desde = fields.Date('Fecha inicio refund')
+    refund_fecha_hasta = fields.Date('Fecha fin refund')
+    number_refund_to = fields.Integer('fin refund')
 
     is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
 
