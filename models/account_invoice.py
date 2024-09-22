@@ -427,6 +427,7 @@ class AccountMove(models.Model):
         tax_grouped = {}
         rete_grouped = {}
         valorimpuestos = 0
+        basedeimpuestos = 0
         t_amount_wo_tax = 0
         for line in self.invoice_line_ids:
             num += 1
@@ -491,6 +492,7 @@ class AccountMove(models.Model):
                     'porcentaje': "{:.4f}".format(tax_id.amount*-1),
                     'valor_base': this_amount,
                     'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
+            basedeimpuestos += this_amount
             valorimpuestos += valorimpuesto 
             # t_amount_wo_tax += this_amount
             if not line.name:
@@ -511,7 +513,7 @@ class AccountMove(models.Model):
                                 'periodo_fecha':line.periodo_fecha,
                                 'periodo_codigo':line.periodo_codigo})
         
-        return invoice_lines,valorimpuestos,tax_grouped,rete_grouped
+        return invoice_lines,valorimpuestos,tax_grouped,rete_grouped,basedeimpuestos
 
     def to_json88(self,valores):
         totalDays =100
@@ -553,9 +555,9 @@ class AccountMove(models.Model):
                         # print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
-                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'] =self.veybuscalineas3(self.tipo_documento) #
+                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'],send["valorsinimpuestos"] =self.veybuscalineas3(self.tipo_documento) #
                     elif linea.campo_tecnico.strip() == "totales":
-                        send["valorsinimpuestos"] =self.amount_untaxed
+                        pass #send["valorsinimpuestos"] = self.amount_untaxed
                     elif linea.campo_tecnico.strip() == "valor_impuestos":
                         pass #send[linea.name] =self.veybuscaimpuestos()
                     elif linea.campo_tecnico.strip() == "retenciones":
