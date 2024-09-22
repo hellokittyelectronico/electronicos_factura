@@ -555,9 +555,9 @@ class AccountMove(models.Model):
                         # print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
-                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'],send["valorsinimpuestos"] =self.veybuscalineas3(self.tipo_documento) #
+                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'],unabasequenoes =self.veybuscalineas3(self.tipo_documento) #
                     elif linea.campo_tecnico.strip() == "totales":
-                        pass #send["valorsinimpuestos"] = self.amount_untaxed
+                        send["valorsinimpuestos"] = self.amount_untaxed
                     elif linea.campo_tecnico.strip() == "valor_impuestos":
                         pass #send[linea.name] =self.veybuscaimpuestos()
                     elif linea.campo_tecnico.strip() == "retenciones":
