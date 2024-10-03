@@ -430,7 +430,7 @@ class AccountMove(models.Model):
         basedeimpuestos = 0
         t_amount_wo_tax = 0
         for line in self.invoice_line_ids:
-            if (line.product_id.name != "Anticipo"):
+            if (line.product_id.name != "Monedero electrónico"):
                 num += 1
                 price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
                 amounts = line.tax_ids.compute_all(price, line.currency_id, line.quantity, product=line.product_id, partner=line.move_id.partner_id)
