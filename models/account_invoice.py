@@ -429,8 +429,11 @@ class AccountMove(models.Model):
         valorimpuestos = 0
         basedeimpuestos = 0
         t_amount_wo_tax = 0
+        productos_anticipo = 0
         for line in self.invoice_line_ids:
-            if (line.product_id.name != "Monedero electrónico"):
+            if (line.product_id.name == "Monedero electrónico"):
+                productos_anticipo += line.price_unit * line.quantity
+            else:
                 num += 1
                 price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
                 amounts = line.tax_ids.compute_all(price, line.currency_id, line.quantity, product=line.product_id, partner=line.move_id.partner_id)
@@ -514,7 +517,7 @@ class AccountMove(models.Model):
                                     'periodo_fecha':line.periodo_fecha,
                                     'periodo_codigo':line.periodo_codigo})
         
-        return invoice_lines,valorimpuestos,tax_grouped,rete_grouped,basedeimpuestos
+        return invoice_lines,valorimpuestos,tax_grouped,rete_grouped,basedeimpuestos,productos_anticipo
 
     def to_json88(self,valores):
         totalDays =100
@@ -556,9 +559,10 @@ class AccountMove(models.Model):
                         # print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
-                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'],unabasequenoes =self.veybuscalineas3(self.tipo_documento) #
+                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'],unabasequenoes,productos_anticipo =self.veybuscalineas3(self.tipo_documento) #
+                        send["valorsinimpuestos"] = self.amount_untaxed + abs(productos_anticipo)
                     elif linea.campo_tecnico.strip() == "totales":
-                        send["valorsinimpuestos"] = self.amount_untaxed
+                        pass 
                     elif linea.campo_tecnico.strip() == "valor_impuestos":
                         pass #send[linea.name] =self.veybuscaimpuestos()
                     elif linea.campo_tecnico.strip() == "retenciones":
