@@ -429,91 +429,95 @@ class AccountMove(models.Model):
         valorimpuestos = 0
         basedeimpuestos = 0
         t_amount_wo_tax = 0
+        productos_anticipo = 0
         for line in self.invoice_line_ids:
-            num += 1
-            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            amounts = line.tax_ids.compute_all(price, line.currency_id, line.quantity, product=line.product_id, partner=line.move_id.partner_id)
-            amount_wo_tax = line.price_unit * line.quantity
-            this_amount = price * line.quantity
-            print(amounts)
-            taxes = amounts['taxes']
-            tax_item ={}
-            tax_items =[]
-            rete_items = []
-            valorimpuesto = 0
-            incluido = False
-            for tax in taxes:
-                tax_id = self.env['account.tax'].browse(tax['id'])
-                if tax_id.price_include or tax_id.amount_type == 'division':
-                    amount_wo_tax -= tax['amount']
-                if tax_id.tipo_impuesto:
-                    tax_item={'codigo_impuesto': int(tax_id.tipo_impuesto),
-                    'porcentaje_impuesto': "{:.2f}".format(tax_id.amount),
-                    'valor_base_impuesto': "{:.2f}".format(amounts['total_excluded']),
-                    'incluido': tax['price_include'],
-                    'valor_impuesto':  "{:.2f}".format(tax['amount'])}
-                    valorimpuesto += tax['amount']
-                    incluido = tax['price_include']
-                    tax_items.append(tax_item)
-                    val = {'move_id': line.move_id.id,
-                    'name': tax_id.name, #tax_group_id.
-                    'tax_id': tax['id'],
-                    'codigo': int(tax_id.tipo_impuesto),
-                    'incluido': tax['price_include'],
-                    'porcentaje': "{:.2f}".format(tax_id.amount),
-                    'base': amounts['total_excluded'],
-                    'cantidad': line.quantity, 
-                    'amount': tax['amount']}
-                    key = tax['id']
-                    if key not in tax_grouped:
-                        tax_grouped[key] = val
-                    else:
-                        tax_grouped[key]['amount'] += val['amount']
-                        tax_grouped[key]['base'] += this_amount
-                        tax_grouped[key]['cantidad'] += line.quantity
-                # for rete in self.line_ids:
-                if tax_id.rte_iva or tax_id.rte_fuente or tax_id.rte_ica:
-                    key = tax['id']
-                    val2 = {'rte_fuente': tax_id.rte_fuente,
-                    'rte_iva': tax_id.rte_iva,
-                    'rte_ica': tax_id.rte_ica,
-                    'name': tax_id.name, #tax_group_id.
-                    'tax_id': tax['id'],
-                    'porcentaje': "{:.4f}".format(tax_id.amount*-1) if tipo_documento == "factura" else "{:.2f}".format(tax_id.amount*-1),
-                    'valor_base': this_amount,
-                    'amount': tax['amount'],
-                    'valor_retenido': tax['amount']*-1,}
-                    if key not in rete_grouped:
-                        rete_grouped[key] = val2
-                    else:
-                        rete_grouped[key]['valor_base'] += this_amount
-                        rete_grouped[key]['valor_retenido'] += tax['amount']*-1
-                    rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
-                    'porcentaje': "{:.4f}".format(tax_id.amount*-1),
-                    'valor_base': this_amount,
-                    'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
-            basedeimpuestos += this_amount
-            valorimpuestos += valorimpuesto 
-            # t_amount_wo_tax += this_amount
-            if not line.name:
-                raise UserError(_('Uno de los productos en la factura esta incompleto, por favor verifique. (Sin nombre)'))
-            invoice_lines.append({'numero_linea':num,
-                                'product_id':line.product_id.id,
-                                'codigo':line.product_id.default_code,
-                                'configurable':line.product_id.configurable if hasattr(line.product_id, 'configurable') else False,
-                                'cantidad': line.quantity,
-                                'valor_unitario': "{:.2f}".format(amounts['total_excluded']),
-                                'price': "{:.2f}".format(price),
-                                'precio': line.price_unit,
-                                'incluido': incluido,
-                                'descuento':line.discount,
-                                'descripcion': line.name[:1000],
-                                'taxes': tax_items,
-                                'rete_items':rete_items,
-                                'periodo_fecha':line.periodo_fecha,
-                                'periodo_codigo':line.periodo_codigo})
+            if (line.product_id.name == "Monedero electrónico"):
+                productos_anticipo += line.price_unit * line.quantity
+            else:
+                num += 1
+                price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+                amounts = line.tax_ids.compute_all(price, line.currency_id, line.quantity, product=line.product_id, partner=line.move_id.partner_id)
+                amount_wo_tax = line.price_unit * line.quantity
+                this_amount = price * line.quantity
+                print(amounts)
+                taxes = amounts['taxes']
+                tax_item ={}
+                tax_items =[]
+                rete_items = []
+                valorimpuesto = 0
+                incluido = False
+                for tax in taxes:
+                    tax_id = self.env['account.tax'].browse(tax['id'])
+                    if tax_id.price_include or tax_id.amount_type == 'division':
+                        amount_wo_tax -= tax['amount']
+                    if tax_id.tipo_impuesto:
+                        tax_item={'codigo_impuesto': int(tax_id.tipo_impuesto),
+                        'porcentaje_impuesto': "{:.2f}".format(tax_id.amount),
+                        'valor_base_impuesto': "{:.2f}".format(this_amount),
+                        'incluido': tax['price_include'],
+                        'valor_impuesto':  "{:.2f}".format(tax['amount'])}
+                        valorimpuesto += tax['amount']
+                        incluido = tax['price_include']
+                        tax_items.append(tax_item)
+                        val = {'move_id': line.move_id.id,
+                        'name': tax_id.name, #tax_group_id.
+                        'tax_id': tax['id'],
+                        'codigo': int(tax_id.tipo_impuesto),
+                        'incluido': tax['price_include'],
+                        'porcentaje': "{:.2f}".format(tax_id.amount),
+                        'base': this_amount,
+                        'cantidad': line.quantity, 
+                        'amount': tax['amount']}
+                        key = tax['id']
+                        if key not in tax_grouped:
+                            tax_grouped[key] = val
+                        else:
+                            tax_grouped[key]['amount'] += val['amount']
+                            tax_grouped[key]['base'] += this_amount
+                            tax_grouped[key]['cantidad'] += line.quantity
+                    # for rete in self.line_ids:
+                    if tax_id.rte_iva or tax_id.rte_fuente or tax_id.rte_ica:
+                        key = tax['id']
+                        val2 = {'rte_fuente': tax_id.rte_fuente,
+                        'rte_iva': tax_id.rte_iva,
+                        'rte_ica': tax_id.rte_ica,
+                        'name': tax_id.name, #tax_group_id.
+                        'tax_id': tax['id'],
+                        'porcentaje': "{:.4f}".format(tax_id.amount*-1) if tipo_documento == "factura" else "{:.2f}".format(tax_id.amount*-1),
+                        'valor_base': this_amount,
+                        'amount': tax['amount'],
+                        'valor_retenido': tax['amount']*-1,}
+                        if key not in rete_grouped:
+                            rete_grouped[key] = val2
+                        else:
+                            rete_grouped[key]['valor_base'] += this_amount
+                            rete_grouped[key]['valor_retenido'] += tax['amount']*-1
+                        rete_items.append({'rte_fuente': tax_id.rte_fuente,'rte_iva': tax_id.rte_iva,'rte_ica': tax_id.rte_ica,
+                        'porcentaje': "{:.4f}".format(tax_id.amount*-1),
+                        'valor_base': this_amount,
+                        'valor_retenido':  "{:.2f}".format(tax['amount']*-1)})
+                basedeimpuestos += this_amount
+                valorimpuestos += valorimpuesto 
+                # t_amount_wo_tax += this_amount
+                if not line.name:
+                    raise UserError(_('Uno de los productos en la factura esta incompleto, por favor verifique. (Sin nombre)'))
+                invoice_lines.append({'numero_linea':num,
+                                    'product_id':line.product_id.id,
+                                    'codigo':line.product_id.default_code,
+                                    'configurable':line.product_id.configurable if hasattr(line.product_id, 'configurable') else False,
+                                    'cantidad': line.quantity,
+                                    'valor_unitario': "{:.2f}".format(amounts['total_excluded']),
+                                    'price': "{:.2f}".format(price),
+                                    'precio': line.price_unit,
+                                    'incluido': incluido,
+                                    'descuento':line.discount,
+                                    'descripcion': line.name[:1000],
+                                    'taxes': tax_items,
+                                    'rete_items':rete_items,
+                                    'periodo_fecha':line.periodo_fecha,
+                                    'periodo_codigo':line.periodo_codigo})
         
-        return invoice_lines,valorimpuestos,tax_grouped,rete_grouped,basedeimpuestos
+        return invoice_lines,valorimpuestos,tax_grouped,rete_grouped,basedeimpuestos,productos_anticipo
 
     def to_json88(self,valores):
         totalDays =100
@@ -555,9 +559,10 @@ class AccountMove(models.Model):
                         # print(fecha)
                         send[linea.name] =fecha
                     elif linea.campo_tecnico.strip() == "lineas_producto":
-                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'],unabasequenoes =self.veybuscalineas3(self.tipo_documento) #
+                        send[linea.name],send["valorimpuestos"],send["tax_grouped"],send['rete_items'],unabasequenoes,productos_anticipo =self.veybuscalineas3(self.tipo_documento) #
+                        send["valorsinimpuestos"] = self.amount_untaxed + abs(productos_anticipo)
                     elif linea.campo_tecnico.strip() == "totales":
-                        send["valorsinimpuestos"] = self.amount_untaxed
+                        pass 
                     elif linea.campo_tecnico.strip() == "valor_impuestos":
                         pass #send[linea.name] =self.veybuscaimpuestos()
                     elif linea.campo_tecnico.strip() == "retenciones":
