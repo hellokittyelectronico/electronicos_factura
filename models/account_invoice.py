@@ -449,7 +449,7 @@ class AccountMove(models.Model):
                 if tax_id.tipo_impuesto:
                     tax_item={'codigo_impuesto': int(tax_id.tipo_impuesto),
                     'porcentaje_impuesto': "{:.2f}".format(tax_id.amount),
-                    'valor_base_impuesto': "{:.2f}".format(this_amount),
+                    'valor_base_impuesto': "{:.2f}".format(amounts['total_excluded']),
                     'incluido': tax['price_include'],
                     'valor_impuesto':  "{:.2f}".format(tax['amount'])}
                     valorimpuesto += tax['amount']
@@ -461,7 +461,7 @@ class AccountMove(models.Model):
                     'codigo': int(tax_id.tipo_impuesto),
                     'incluido': tax['price_include'],
                     'porcentaje': "{:.2f}".format(tax_id.amount),
-                    'base': this_amount,
+                    'base': amounts['total_excluded'],
                     'cantidad': line.quantity, 
                     'amount': tax['amount']}
                     key = tax['id']
