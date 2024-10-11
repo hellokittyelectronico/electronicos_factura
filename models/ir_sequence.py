@@ -37,7 +37,6 @@ def _update_nogap(self, number_increment):
     return number_next
 
 class IrSequence(models.Model):
-    _name = 'ir.sequence'
     _inherit = 'ir.sequence'
 
     use_dian_control = fields.Boolean('Use DIAN control resolutions')
@@ -124,11 +123,15 @@ class IrSequence(models.Model):
                             _active_resolution = True
 
     def _next(self, sequence_date=None):
+        _logger.info(" que vaoma   Please make sure a sequence is set for current company." )
+        print("no estoy seguro que pasa")
+        print(self.use_dian_control)
         if not self.use_dian_control:
             return super(IrSequence, self)._next()
-
+        
         seq_dian_actual = self.env['ir.sequence.dian_resolution'].search([('sequence_id','=',self.id),('active_resolution','=',True)], limit=1)
-        #print(seq_dian_actual)
+        print("seq_dian_actual")
+        print(seq_dian_actual)
         if seq_dian_actual.exists():
             number_actual = seq_dian_actual._next()
             import re
@@ -141,6 +144,7 @@ class IrSequence(models.Model):
                 if seq_dian_next.exists():
                     seq_dian_actual.active_resolution = False
                     return seq_dian_next._next()
+            print(number_actual)
             return number_actual
         return super(IrSequence, self)._next()
 
