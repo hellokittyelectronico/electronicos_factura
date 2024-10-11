@@ -45,7 +45,7 @@ class datos_generales(models.Model):
     )
     otro_proveedor_tecnologico = fields.Char('Otro Proveedor Tecnologico')
     sub_tipo_documento = fields.Selection([
-        ('Factura Electronica', 'Factura Electronica'),
+        ('Factura_Electronica', 'Factura_Electronica'),
         ('Nota_debito', 'Nota_debito'),
         ('Nota_credito', 'Nota_credito'),
         ('Documento_soporte', 'Documento_soporte'),
@@ -97,7 +97,7 @@ class base_electronicos(models.Model):
 
     general_factura = fields.One2many('electronicos_factura.datos_generales','general_factura', ondelete='cascade')
     sub_tipo_documento = fields.Selection([
-        ('Factura Electronica', 'Factura Electronica'),
+        ('Factura_Electronica', 'Factura_Electronica'),
         ('Nota_debito', 'Nota_debito'),
         ('Nota_credito', 'Nota_credito'),
         ('Documento_soporte', 'Documento_soporte'),
