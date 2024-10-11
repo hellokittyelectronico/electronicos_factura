@@ -675,8 +675,13 @@ class AccountMove(models.Model):
                                 print("final")
                                 print(resultado)
                                 self.write({"impreso":False,"transaccionID":final_text['transactionID'],"estado_factura":"Generada_correctamente"})
-                            return self.env['wk.wizard.message'].genrated_message(final_text['mensaje'],final_text['titulo'] ,final_text['link'])
+                            else:
+                                # raise UserError(_(final_text['error_d']))
+                                # raise Warning(result)
+                                self.write({'rechazo':final_text['error'],"estado_factura":"Generada_con_errores"})
+                                return self.env['wk.wizard.message'].genrated_message(final_text['error_d'],final_text['titulo'] ,final_text['link'])
                         else:
+                            print("entro por el else")
                             final_text = json.loads(json.dumps(final))#.encode().decode("utf-8") eval(
                             #final_text = final_error['error']
                             self.write({'rechazo':"2 "+final_text['error']})
