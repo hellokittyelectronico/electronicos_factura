@@ -146,7 +146,7 @@ class AccountMove(models.Model):
     tipo_documento = fields.Char(string="Documento", compute='documento',store=True)#
     
     sub_tipo_documento = fields.Selection([
-        ('Factura_Electronica', 'Factura Electronica'),
+        ('Factura_Electronica', 'Factura_Electronica'),
         ('nota_debito_factura', 'Nota_debito_factura'),
         ('Documento_soporte', 'Documento_soporte'),
         ('Pos', 'Pos'),
@@ -530,6 +530,7 @@ class AccountMove(models.Model):
         documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
         self.otro_proveedor_tecnologico = documento.otro_proveedor_tecnologico
         self.proveedor_tecnologico = documento.proveedor_tecnologico
+        _logger.info(documento.sub_tipo_documento)
         self.sub_tipo_documento = documento.sub_tipo_documento
         # print(documento)
         if documento:
