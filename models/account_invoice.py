@@ -146,7 +146,7 @@ class AccountMove(models.Model):
     tipo_documento = fields.Char(string="Documento", compute='documento',store=True)#
     
     sub_tipo_documento = fields.Selection([
-        ('Factura_Electronica', 'Factura Electronica'),
+        ('Factura_Electronica', 'Factura_Electronica'),
         ('nota_debito_factura', 'Nota_debito_factura'),
         ('Documento_soporte', 'Documento_soporte'),
         ('Pos', 'Pos'),
@@ -530,6 +530,7 @@ class AccountMove(models.Model):
         documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
         self.otro_proveedor_tecnologico = documento.otro_proveedor_tecnologico
         self.proveedor_tecnologico = documento.proveedor_tecnologico
+        _logger.info(documento.sub_tipo_documento)
         self.sub_tipo_documento = documento.sub_tipo_documento
         # print(documento)
         if documento:
@@ -611,15 +612,21 @@ class AccountMove(models.Model):
 
         if resultado.status_code == 200:
             resultado2 = json.loads(resultado.text)
-            print(resultado2["result"])
-            if "result" in resultado2:
-                final_text = json.loads(json.dumps(resultado2))
-                result = final_text["result"]
-                print("final_error")
-                print(final_text)
-                print("result")
-                print(result)
-                return result
+            if "error" in resultado2:
+                print("resultado.error")
+                return True, resultado2['error']['data']  
+            else:
+                resultado2 = json.loads(resultado.text)
+                print("resultado2")
+                print(resultado2)
+                if "result" in resultado2:
+                    final_text = json.loads(json.dumps(resultado2))
+                    result = final_text["result"]
+                    print("final_error")
+                    print(final_text)
+                    print("result")
+                    print(result)
+                    return False, result
         #         if "error_d" in final:
         #             if "transactionID" in final:
         #                 print("final")
@@ -680,9 +687,14 @@ class AccountMove(models.Model):
                     
                     print(prefijo)
                     send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":self.tipo_documento}
-                    cufe = self.pedircufe(send,urlini)
-                    print(cufe)
-                    self.factura.write({"cufe":cufe['cufe']})
+                    
+                    errorcufe, cufe = self.pedircufe(send,urlini)
+                    if errorcufe:
+                        return self.env['wk.wizard.message'].genrated_message(cufe,"Error al pedir el cufe" ,"https://www.navegasoft.com")
+                    else:
+                        print(cufe)
+                        self.factura.write({"cufe":cufe['cufe']})
+                    
                     # return
                     #self.write({"cufe":})
             send,error = invoice.to_json88(valores)
