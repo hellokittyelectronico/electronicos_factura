@@ -431,7 +431,7 @@ class AccountMove(models.Model):
         t_amount_wo_tax = 0
         productos_anticipo = 0
         for line in self.invoice_line_ids:
-            if (line.product_id.name == "Monedero electrónico"):
+            if (line.product_id.name == "Monedero electrónico" or line.product_id.name == "Anticipo"):
                 productos_anticipo += line.price_unit * line.quantity
             else:
                 num += 1
