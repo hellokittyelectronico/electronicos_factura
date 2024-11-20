@@ -26,7 +26,7 @@
 
             <xpath expr="//field[@name='date_range_ids']" position="after">
                 <field name="dian_resolution_ids" invisible = "use_dian_control == True">
-                  <tree string="DIAN Resolutions" editable="top" default_order="id desc">
+                  <list string="DIAN Resolutions" editable="top" default_order="id desc">
                         <field name="resolution_number" />
                         <field name="number_from" />
                         <field name="number_to" />
@@ -34,7 +34,7 @@
                         <field name="date_from" />
                         <field name="date_to" />
                         <field name="active_resolution" />
-                    </tree>
+                  </list>
                 </field>
                 
             </xpath>
