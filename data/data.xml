@@ -703,4 +703,13 @@
         <field name="detalle">Numero orden de compra en la factura</field>
     </record>
 
+    <record id="facturan0d3" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">Telefono_compania</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.company_id.partner_id.phone</field>
+        <field name="detalle">Numero telefono contacto</field>
+    </record>
+
 </odoo>

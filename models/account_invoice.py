@@ -672,7 +672,7 @@ class AccountMove(models.Model):
             if not self.factura.cufe and (self.tipo_documento == "Nota Credito" or self.tipo_documento == "Nota Credito Doc soporte"):
                 if not self.factura:
                     pass
-                    #raise UserError("Recuerda que debes asociar una factura y un tipo.")
+                    #raise UserError("Recuerda que debes asociar una factura y un tipo.") 
                 else:
                     long_total = len(self.factura.name)
                     prefijo = self.factura.journal_id.code
