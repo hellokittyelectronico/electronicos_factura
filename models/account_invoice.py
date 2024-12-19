@@ -676,6 +676,7 @@ class AccountMove(models.Model):
                 else:
                     long_total = len(self.factura.name)
                     prefijo = self.factura.journal_id.code
+                    
                     print(prefijo)
                     lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
                     #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
