@@ -260,16 +260,18 @@ class AccountMove(models.Model):
         response2={}
         valores_lineas = valores.mp_id
         documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id),('company_id','=',self.company_id[0].id)])
-        print("haber")
-        print(self.journal_id)
-        print(documento.tipo_factura)
-        print("self.move_type")
-        print(self)
-        print(self[0].move_type)
+        # print("haber")
+        # print(self.journal_id)
+        # print(documento.tipo_factura)
+        # print("self.move_type")
+        # print(self)
+        # print(self[0].move_type)
         # print(self[1].move_type)
         _logger.info(self[0].move_type)
         _logger.info(documento)
-        _logger.info(documento.tipo_factura)
+        for nombre in documento.tipo_factura:
+            _logger.info(nombre.name)
+        _logger.info(documento.tipo_factura[0])    
         _logger.info(self.journal_id[0].id)
         if documento:
             if self[0].move_type == "out_invoice" and documento.tipo_factura == "factura":
