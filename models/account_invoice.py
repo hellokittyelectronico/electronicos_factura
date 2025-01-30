@@ -263,7 +263,7 @@ class AccountMove(models.Model):
         # print("haber")
         # print(self.journal_id)
         # print(documento.tipo_factura)
-        # print("self.move_type")
+        # print("self.move_type")aaa
         # print(self)
         # print(self[0].move_type)
         # print(self[1].move_type)
