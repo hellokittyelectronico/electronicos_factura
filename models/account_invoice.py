@@ -269,7 +269,7 @@ class AccountMove(models.Model):
         # print(self[1].move_type)
         _logger.info(self[0].move_type)
         _logger.info(documento)
-        _logger.info(documento.tipo_factura[0])    
+        _logger.info(documento.tipo_factura)    
         _logger.info(self.journal_id[0].id)
         if documento:
             if self[0].move_type == "out_invoice" and documento.tipo_factura == "factura":
