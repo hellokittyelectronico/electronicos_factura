@@ -674,18 +674,20 @@ class AccountMove(models.Model):
             if not self.factura.cufe and (self.tipo_documento == "Nota Credito" or self.tipo_documento == "Nota Credito Doc soporte"):
                 if not self.factura:
                     pass
-                    #raise UserError("Recuerda que debes asociar una factura y un tipo.")
+                    #raise UserError("Recuerda que debes asociar una factura y un tipo.") 
                 else:
-                    # long_total = len(self.factura.name)
-                    # prefijo = self.factura.journal_id.code
-                    # print(prefijo)
-                    # lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
-                    # #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
-                    # folio = self.factura.name[lon_prefix:long_total] 
                     long_total = len(self.factura.name)
-                    lista = re.findall("\d+", self.factura.name)
-                    folio = lista[0]
-                    prefijo =  self.factura.name[0:long_total-len(folio)]
+                    prefijo = self.factura.journal_id.code
+                    
+                    print(prefijo)
+                    lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
+                    #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
+                    folio = self.factura.name[lon_prefix:long_total] 
+                    
+                    # long_total = len(self.factura.name)
+                    # lista = re.findall("\d+", self.factura.name)
+                    # folio = lista[0]
+                    # prefijo =  self.factura.name[0:long_total-len(folio)]
                     
                     print(prefijo)
                     send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":self.tipo_documento}
