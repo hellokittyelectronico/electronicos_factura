@@ -259,17 +259,17 @@ class AccountMove(models.Model):
         valores = self.env['base_electronicos.tabla'].search([('name', '=', 'Factura electrónica')])
         response2={}
         valores_lineas = valores.mp_id
-        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id),('company_id','=',self.company_id[0].id)])
-        print("haber")
-        print(self.journal_id)
-        print(documento.tipo_factura)
-        print("self.move_type")
-        print(self)
-        print(self[0].move_type)
+        documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id),('company_id','=',self.company_id[0].id)],limit=1)
+        # print("haber")
+        # print(self.journal_id)
+        # print(documento.tipo_factura)
+        # print("self.move_type")aaa
+        # print(self)
+        # print(self[0].move_type)
         # print(self[1].move_type)
         _logger.info(self[0].move_type)
         _logger.info(documento)
-        _logger.info(documento.tipo_factura)
+        _logger.info(documento.tipo_factura)    
         _logger.info(self.journal_id[0].id)
         if documento:
             if self[0].move_type == "out_invoice" and documento.tipo_factura == "factura":
@@ -527,7 +527,9 @@ class AccountMove(models.Model):
         valores_lineas = valores.mp_id
         # print("haber")
         # print(self.journal_id)
-        documento = valores.general_factura.search([('diario', '=', self.journal_id.id)])
+        # documento = valores.general_factura.search([('diario', '=', self.journal_id[0].id),('company_id','=',self.company_id[0].id)],limit=1)
+        documento = valores.general_factura.search([('diario', '=', self.journal_id.id),('company_id','=',self.company_id.id)],limit=1)
+        
         self.otro_proveedor_tecnologico = documento.otro_proveedor_tecnologico
         self.proveedor_tecnologico = documento.proveedor_tecnologico
         _logger.info(documento.sub_tipo_documento)
@@ -672,18 +674,20 @@ class AccountMove(models.Model):
             if not self.factura.cufe and (self.tipo_documento == "Nota Credito" or self.tipo_documento == "Nota Credito Doc soporte"):
                 if not self.factura:
                     pass
-                    #raise UserError("Recuerda que debes asociar una factura y un tipo.")
+                    #raise UserError("Recuerda que debes asociar una factura y un tipo.") 
                 else:
-                    # long_total = len(self.factura.name)
-                    # prefijo = self.factura.journal_id.code
-                    # print(prefijo)
-                    # lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
-                    # #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
-                    # folio = self.factura.name[lon_prefix:long_total] 
                     long_total = len(self.factura.name)
-                    lista = re.findall("\d+", self.factura.name)
-                    folio = lista[0]
-                    prefijo =  self.factura.name[0:long_total-len(folio)]
+                    prefijo = self.factura.journal_id.code
+                    
+                    print(prefijo)
+                    lon_prefix = len(self.factura.journal_id.code)#sequence_id.prefix 
+                    #prefi = self.factura.journal_id.code # sequence_id.prefix  self.number[0:long_total-len(number)]
+                    folio = self.factura.name[lon_prefix:long_total] 
+                    
+                    # long_total = len(self.factura.name)
+                    # lista = re.findall("\d+", self.factura.name)
+                    # folio = lista[0]
+                    # prefijo =  self.factura.name[0:long_total-len(folio)]
                     
                     print(prefijo)
                     send = {"id_plataforma":self.company_id.partner_id.id_plataforma,"password":self.company_id.partner_id.password,"prefijo":prefijo,"folio":folio,"tipo_documento":"cufe","documento_electronico":"factura","tipo_documento2":self.tipo_documento}
