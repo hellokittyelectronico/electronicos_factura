@@ -685,4 +685,23 @@
         <field name="detalle">otro proveedor tecnologico</field>
     </record>
 
+
+    <record id="facturan0d1" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">nameORC</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.ref</field>
+        <field name="detalle">Numero orden de compra en la factura</field>
+    </record>
+
+    <record id="facturan0d2" model="base_electronicos.line">
+        <field name="mp_id" ref="facturan0a"/>
+        <field name="name">fechaORC</field>
+        <field name="categoria">factura</field>
+        <field name="obligatorio">false</field>
+        <field name="campo_tecnico">self.invoice_date</field>
+        <field name="detalle">Numero orden de compra en la factura</field>
+    </record>
+
 </odoo>
