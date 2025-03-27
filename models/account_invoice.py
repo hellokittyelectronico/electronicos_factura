@@ -336,7 +336,6 @@ class AccountMove(models.Model):
 
     #     return values
 
-    #@api.one
     @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
         default = dict(default or {})
@@ -348,24 +347,24 @@ class AccountMove(models.Model):
         return super(AccountMove, self).copy(default=default)
     
     #@api.one
-    @api.depends('number')
-    def _get_number_folio(self):
-        if self.number:
-            self.number_folio = self.number.replace('INV','').replace('/','')
+    # @api.depends('number')
+    # def _get_number_folio(self):
+    #     if self.number:
+    #         self.number_folio = self.number.replace('INV','').replace('/','')
 
-    #@api.one        
-    @api.depends('amount_total', 'currency_id')
-    def _get_amount_to_text(self):
-        self.amount_to_text = amount_to_text_es_MX.get_amount_to_text(self, self.amount_total, 'es_cheque', self.currency_id.name)
+    # #@api.one        
+    # @api.depends('amount_total', 'currency_id')
+    # def _get_amount_to_text(self):
+    #     self.amount_to_text = amount_to_text_es_MX.get_amount_to_text(self, self.amount_total, 'es_cheque', self.currency_id.name)
         
-    @api.model
-    def _get_amount_2_text(self, amount_total):
-        return amount_to_text_es_MX.get_amount_to_text(self, amount_total, 'es_cheque', self.currency_id.name)
+    # @api.model
+    # def _get_amount_2_text(self, amount_total):
+    #     return amount_to_text_es_MX.get_amount_to_text(self, amount_total, 'es_cheque', self.currency_id.name)
 
-    #@api.multi
-    @api.onchange('payment_term_id')
-    def _get_metodo_pago(self):
-        return
+    # #@api.multi
+    # @api.onchange('payment_term_id')
+    # def _get_metodo_pago(self):
+    #     return
         # if self.payment_term_id:
         #     if self.payment_term_id.methodo_pago == 'PPD':
         #         values = {
