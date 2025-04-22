@@ -21,8 +21,8 @@ class AccountMove(models.Model):
     codigo_qr = fields.Char('codigo_qr')                       
     cufe = fields.Char('cufe')   
     factura_cfdi = fields.Boolean("si si o no")
-    rechazo = fields.Char('rechazo')                       
-    grafica_link = fields.Char('pdf')
+    rechazo = fields.Char('rechazo',copy=False)                       
+    grafica_link = fields.Char('pdf',copy=False)
     factura_electronica = fields.Boolean('Factura Electronica')
     nota_debito = fields.Selection(
         selection=[('30', '30 Nota Débito que referencia una factura electrónica.'), 
@@ -117,7 +117,7 @@ class AccountMove(models.Model):
         ('no_generada', 'No_generada'),
         ('Generada_correctamente', 'Generada_correctamente'),
         ('Generada_con_errores', 'Generada_con_errores'),
-    ], string='Estado',default="no_generada")
+    ], string='Estado',default="no_generada",copy=False)
     factura = fields.Many2one('account.move', domain="[('estado_factura', 'in', ('Generada_correctamente','a'))]")#,relation='partner_delivery_partner_rel',column1="id", column2="id2"
     pdf_cdfi_invoice = fields.Binary("CDFI Invoice")
     qrcode_image = fields.Binary("QRCode")
@@ -128,7 +128,7 @@ class AccountMove(models.Model):
     )
     transaccionID = fields.Char(string=_('transaccionID'))
     impresa = fields.Char(string=_('Impresa'))
-    fecha_factura = fields.Datetime(string=_('Fecha Factura'), readonly=True)
+    fecha_factura = fields.Datetime(string=_('Fecha Factura'), readonly=True,copy=False)
     nombre_not = fields.Char(string=_('Nombre nota'))
     checkin = fields.Char(string=_('Checkin'))
     checkout = fields.Char(string=_('Checkout'))
@@ -154,9 +154,9 @@ class AccountMove(models.Model):
 
     calidades_atributos = fields.Many2many("account.calidadess")
     usuario_aduanero = fields.Many2many("account.aduaneros")    
-    country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
+    country_id = fields.Many2one('res.country', string='Pais', compute='_compute_pais')
     
-    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
+    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=True)
 
     url = fields.Char(string="Url")
     proveedor_tecnologico = fields.Char(string="Proveedor tecnologico")
@@ -336,36 +336,71 @@ class AccountMove(models.Model):
 
     #     return values
 
-    #@api.one
-    @api.returns('self', lambda value: value.id)
-    def copy(self, default=None):
-        default = dict(default or {})
-        #if self.estado_factura == 'factura_correcta' or self.estado_factura == 'factura_cancelada':
-        default['estado_factura'] = 'no_generada'
-        #default['folio_fiscal'] = ''
-        default['fecha_factura'] = None
-        default['cufe'] = False
-        return super(AccountMove, self).copy(default=default)
+    # @api.returns('self', lambda value: value.id)
+    # def copy(self, default=None):
+    #     default = dict(default or {})
+    #     # for field_name, field in self._fields.items():
+    #     #     try:
+    #     #         value = getattr(self, field_name)
+    #     #         # _logger.info("Campo: %s | Tipo: %s | Valor: %s", field_name, field.type, value)
+    #     #         print("Campo: %s | Tipo: %s | Valor: %s", field_name, field.type, value)
+    #     #     except Exception as e:
+    #     #         _logger.warning("No se pudo obtener el campo: %s | Error: %s", field_name, e)
+    #     # Solo sobreescribimos campos sabiendo que sus tipos son seguros
+    #     # print(self._fields['cufe'].type)         # Te dice si es char, many2one, etc.
+    #     # print(self._fields['estado_factura'].selection) 
+    #     # default['estado_factura'] = 'no_generada'
+    #     # default['fecha_factura'] = fields.Date.today()  # Mejor que None si es fecha
+    #     # default['cufe'] = ''  # En lugar de False si es char/text
+
+    #     # safe_defaults = {
+    #     #     'nota_debito': '30',
+    #     #     'nota_credito': '1',
+    #     #     'tipo_comprobante': 'I',
+    #     #     'regimen_fiscal': '0',
+    #     #     'sub_tipo_documento': 'Factura_Electronica',
+    #     #     'qr_code_method': 'none',
+    #     # }
+    #     # for field, value in safe_defaults.items():
+    #     #     if field in self._fields and self._fields[field].type == 'selection':
+    #     #         default.setdefault(field, value)
+        
+    #     # Si tienes algún campo selection, asegúrate que tenga un valor válido
+    #     # default['estado'] = 'borrador'
+
+    #     # Si tienes campos many2many o one2many personalizados, asegúrate que sean listas
+    #     # default.setdefault('documentos_adjuntos', [(6, 0, [])])
+    #     # default.setdefault('lineas_adicionales', [(6, 0, [])])
+
+    #     try:
+    #         copied_am = super().copy(default)
+    #     except Exception as e:
+    #         _logger.exception("Error al duplicar account.move: %s", e)
+    #         raise
+
+    #     _logger.info("Copia realizada con éxito: %s", copied_am)
+        
+    #     return copied_am
     
     #@api.one
-    @api.depends('number')
-    def _get_number_folio(self):
-        if self.number:
-            self.number_folio = self.number.replace('INV','').replace('/','')
+    # @api.depends('number')
+    # def _get_number_folio(self):
+    #     if self.number:
+    #         self.number_folio = self.number.replace('INV','').replace('/','')
 
-    #@api.one        
-    @api.depends('amount_total', 'currency_id')
-    def _get_amount_to_text(self):
-        self.amount_to_text = amount_to_text_es_MX.get_amount_to_text(self, self.amount_total, 'es_cheque', self.currency_id.name)
+    # #@api.one        
+    # @api.depends('amount_total', 'currency_id')
+    # def _get_amount_to_text(self):
+    #     self.amount_to_text = amount_to_text_es_MX.get_amount_to_text(self, self.amount_total, 'es_cheque', self.currency_id.name)
         
-    @api.model
-    def _get_amount_2_text(self, amount_total):
-        return amount_to_text_es_MX.get_amount_to_text(self, amount_total, 'es_cheque', self.currency_id.name)
+    # @api.model
+    # def _get_amount_2_text(self, amount_total):
+    #     return amount_to_text_es_MX.get_amount_to_text(self, amount_total, 'es_cheque', self.currency_id.name)
 
-    #@api.multi
-    @api.onchange('payment_term_id')
-    def _get_metodo_pago(self):
-        return
+    # #@api.multi
+    # @api.onchange('payment_term_id')
+    # def _get_metodo_pago(self):
+    #     return
         # if self.payment_term_id:
         #     if self.payment_term_id.methodo_pago == 'PPD':
         #         values = {
@@ -896,9 +931,9 @@ class AccountMoveLine(models.Model):
 
     periodo_fecha = fields.Date("Fecha periodo", required=True, default=fields.Date.context_today)
     periodo_codigo = fields.Selection(selection=[('1', 'Por operación'),('2', 'Acumulado Semanal'),],string=_('Periodo'), required=True,default='1')
-    country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=False, compute='_compute_pais')
+    country_id = fields.Many2one('res.country', string='Pais', readonly=True, copy=True, compute='_compute_pais')
     
-    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
+    is_colombia = fields.Boolean(compute='_compute_is_colombia', default=True)
 
     @api.depends('country_id')
     def _compute_is_colombia(self):

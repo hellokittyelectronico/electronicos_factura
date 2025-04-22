@@ -32,6 +32,7 @@
         'views/account_journal_view.xml',
     ],
     # only loaded in demonstration mode
+    'license': 'OPL-1',
     'demo': [
         'demo/demo.xml',
     ],
