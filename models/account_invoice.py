@@ -290,7 +290,7 @@ class AccountMove(models.Model):
         # if datos_generales: 
         #     self.tipo_documento = "factura"
     #@api.multi
-    @api.returns('self')
+    # @api.returns('self')
     def refund(self, invoice_date=None, date=None, description=None, journal_id=None,nota_credito=None):
         new_invoices = self.browse()
         for invoice in self:
