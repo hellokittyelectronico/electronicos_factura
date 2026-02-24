@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_electronicos_factura_generales,electronicos_factura.datos_generales,model_electronicos_factura_datos_generales,,1,1,1,1
 access_electronicos_secuencia,ir.sequence.dian_resolution,model_ir_sequence_dian_resolution,,1,1,1,1
 access_account_calidadess,account.calidadess,model_account_calidadess,,1,1,1,1
+access_account_aduaneros,electronicos_factura.account_aduaneros,model_account_aduaneros,,1,1,1,1
