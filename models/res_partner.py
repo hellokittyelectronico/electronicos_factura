@@ -7,8 +7,7 @@ class calidades(models.Model):
     codigo = fields.Char("Codigo")
     responsabilidad = fields.Char("Responsabilidad")
     descripcion = fields.Text("Descripcion")
-
-
+    
 class aduaneros(models.Model):
     _name = 'account.aduaneros'
     
@@ -96,6 +95,16 @@ class partner_fact(models.Model):
     tipo_regimen = fields.Selection([('0','Simplificado'),('2','Comun')],'Tipo de Regimen')
     is_colombia = fields.Boolean(compute='_compute_is_colombia', default=False)
 
+    invoice_warn = fields.Selection(
+    [
+        ('no-message', 'Sin mensaje'),
+        ('warning', 'Advertencia'),
+        ('block', 'Mensaje de bloqueo'),
+    ],
+    string='Advertencia en facturación',
+    default='no-message',
+)
+    invoice_warn_msg = fields.Text(string='Mensaje de advertencia')
     @api.depends('country_id')
     def _compute_is_colombia(self):
         for record in self:
